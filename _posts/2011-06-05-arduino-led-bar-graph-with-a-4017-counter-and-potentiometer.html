@@ -1,0 +1,117 @@
+---
+layout: post
+title: Arduino LED Bar Graph with a 4017 Counter and Potentiometer
+categories:
+- Arduino
+- Electronics
+tags:
+- '4017'
+- arduino
+- LED
+- potentiometer
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  iframe: <iframe width="560" height="349" src="http://www.youtube.com/embed/F-hTrOj0SPo?rel=0"
+    frameborder="0" allowfullscreen></iframe>
+  og_description: In this tutorial I will show you how to drive a LED bar graph using
+    an arduino and a potentiometer. This is fairly easy to do and a nice tutorial
+    about it already exists on the arduino website. This tutorial will be different
+    in that we will use a 4017 counter to save pins from the microcontroller. Additionally,
+    I will demonstrate the concept of <persistence of vision>.
+  _syntaxhighlighter_encoded: '1'
+  og_image: http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_pot_real.JPG
+  og_video: http://www.youtube.com/v/F-hTrOj0SPo
+  views: '17462'
+  _stcr@_alex.holsgrove@googlemail.com: '2011-08-28 15:06:12|Y'
+  _stcr@_hdhippodrome@yahoo.com: '2012-02-26 00:04:20|Y'
+  _stcr@_alexandreafc@gmail.com: '2013-08-04 05:54:45|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400452959'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"507";s:5:"score";s:16:"141.079732616065";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"647";s:5:"score";s:16:"8.91797535162002";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:15:"6.7207507742838";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"579";s:5:"score";s:16:"5.95476626902159";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:16:"4.88816931053549";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"3.94816205204402";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"3.31125458905695";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"3.31125458905695";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"3.31125458905695";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"3.31125458905695";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In this tutorial I will show you how to drive a LED bar graph using an arduino and a potentiometer. This is fairly easy to do and a <a href="http://www.arduino.cc/en/Tutorial/BarGraph" rel="nofollow" target="_blank">nice tutorial</a> about it already exists on the arduino website. This tutorial will be different in that we will use a 4017 counter to save pins from the microcontroller. Additionally, I will demonstrate the concept of "persistence of vision".</p>
+<p>See below a video of the circuit in action.</p>
+<p>[field name="iframe"]</p>
+<p><!--more--></p>
+<p><em>If you are able to reproduce this project, have any question, correction, or suggestion, please, let me know by leaving a comment.</em></p>
+<h2>Hardware Required</h2>
+<ul>
+<li>Arduino board</li>
+<li>(1) Rotary Potentiometer</li>
+<li>(1) 4017 Decade Counter</li>
+<li>Breadboard</li>
+<li>Some wires</li>
+</ul>
+<h2>Schematic</h2>
+<p>[caption id="" align="alignnone" width="474" caption="(Click the image to enlarge)"]<a href="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_pot_schem.png"><img class=" " title="Arduino LED Bar Graph Driven with a 4017 Counter and a Potentiometer" src="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_pot_schem.png" alt="Arduino LED Bar Graph Driven with a 4017 Counter and a Potentiometer" width="474" height="350" /></a>[/caption]</p>
+<p><strong>This is how it works:</strong></p>
+<p>The 10 LEDs are wired to the outputs of the 4017 counter. There is no need to protect them with current limiting resistors because the maximum current per pin is 10 mA. The arduino controls the 4017 counter using just 2 digital pins: digital pin 2 is connected to the counter's clock pin, and the digital pin 3 is connected to the counter's reset pin. The arduino runs a program that reads the analog input from the potentiometer (returning a value between 0 and 1023). The value read is mapped to the range 0-9 and is used to decide the number of LEDs to turn on.</p>
+<p>Using the counter we face the limitation of not being able to turn on more than one LED at the same time. To solve this, we quickly turn on/off the LEDs in succession, and thanks to the "<a title="Persistence of Vision on Wikipedia" href="http://en.wikipedia.org/wiki/Persistence_of_vision" rel="nofollow" target="_blank">persistence of vision</a>" effect, all the LEDs appear to be on at the same time.</p>
+<p>Below is the picture of the circuit in real life.</p>
+<p>[caption id="" align="alignnone" width="480" caption="(Click the image to enlarge)"]<a href="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_pot_real.JPG"><img class=" " title="Arduino LED Bar Graph with a 4017 Counter and Potentiometer" src="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_pot_real.JPG" alt="Arduino LED Bar Graph with a 4017 Counter and Potentiometer" width="480" height="360" /></a>[/caption]</p>
+<h2>CODE</h2>
+<p>[cpp gutter="false"]<br />
+/*<br />
+ * LED Bar Graph controlled with an external potentiometer.<br />
+ *<br />
+ * A 4017 counter is used to save pins on the arduino.<br />
+ * The technique of &quot;Persistence of vision&quot; is used to turn on<br />
+ * many LEDs at the same time.<br />
+ *<br />
+ * Developed by Leonel Machava<br />
+ * http://codentronix.com<br />
+ *<br />
+ * This code is release under the &quot;MIT License&quot; available at<br />
+ * http://www.opensource.org/licenses/mit-license.php<br />
+ */</p>
+<p>/* Digital pin connected to the counter's clock pin */<br />
+int clockPin = 2;</p>
+<p>/* Digital pin connected to the counter's reset pin */<br />
+int resetPin = 3;</p>
+<p>/* Analog pin connected to the potentiometer wiper */<br />
+int potPin = 0;</p>
+<p>void setup() {<br />
+  pinMode(clockPin,OUTPUT);<br />
+  pinMode(resetPin,OUTPUT);<br />
+  reset();<br />
+}</p>
+<p>void loop() {<br />
+  /* Read the analog value from the potentiometer. */<br />
+  int potValue = analogRead(potPin);</p>
+<p>  /* Map the value to the range 0-9. */<br />
+  int n = potValue * 10 / 1024;</p>
+<p>  /* Turn ON/OFF quickly the first n LEDs. The n LEDs<br />
+     will appear to be ON at the same time due to the<br />
+     &quot;persistence of vision&quot; effect. */<br />
+  for( int i = 0; i &lt; n; i++ ) {<br />
+    clock();<br />
+  }</p>
+<p>  reset();<br />
+}</p>
+<p>/*<br />
+ * Sends a clock pulse to the counter making it advance.<br />
+ */<br />
+void clock() {<br />
+  digitalWrite(clockPin,HIGH);<br />
+  delay(1);<br />
+  digitalWrite(clockPin,LOW);<br />
+}</p>
+<p>/*<br />
+ * Resets the counter making it start counting from zero.<br />
+ */<br />
+void reset() {<br />
+  digitalWrite(resetPin,HIGH);<br />
+  delay(1);<br />
+  digitalWrite(resetPin,LOW);<br />
+}<br />
+[/cpp]</p>
+<p><a title="Link to the Source Code" href="http://goo.gl/Uef1l">Click here</a> to download the source code (<em>arduino_led_bar_graph_4017_pot.pde / 1.38 Kb</em>)</p>
+<p><em>If you like this article please share it by clicking one of the buttons below, follow me on <a title="My twitter" href="http://twitter.com/codentronix" target="_blank">twitter</a>, or <a href="http://feeds.feedburner.com/codentronix" target="_blank">register on my RSS</a> to receive article updates. Thanks!</em></p>

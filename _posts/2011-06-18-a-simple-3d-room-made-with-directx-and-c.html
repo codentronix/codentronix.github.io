@@ -1,0 +1,340 @@
+---
+layout: post
+title: A Simple 3D Room made with DirectX and C++
+categories:
+- C++
+- DirectX
+- Game Programming
+tags:
+- 3d
+- 3d engine
+- c++
+- directx
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  iframe: <iframe width="480" height="390" src="http://www.youtube.com/embed/wqfIzgLc_P4?rel=0"
+    frameborder="0" allowfullscreen></iframe>
+  og_description: Today, while messing around with an old backup disk, I found a DirectX
+    9 project I made back in 2005. It is an application that renders a 3D room and
+    allows the user to navigate inside it in first person camera. I developed this
+    application to test a 3D engine I was developing at the time.
+  og_video: http://www.youtube.com/v/wqfIzgLc_P4
+  og_image: http://codentronix.com/projects/directx/3droom/3droom.png
+  views: '12357'
+  _stcr@_darkyassin@gmail.com: '2011-08-03 01:12:30|Y'
+  _stcr@_sampad.abbas1370@gmail.com: '2013-01-09 15:53:08|Y'
+  _stcr@_ksirishadesai@gmail.com: '2014-02-09 00:28:07|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400499089'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:15:"17.246244656987";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"14.2725324357409";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"635";s:5:"score";s:16:"11.9117882438231";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"11.4655011411947";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"668";s:5:"score";s:16:"10.6890134972848";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"155";s:5:"score";s:16:"10.5149907440556";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:15:"10.253229533304";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:15:"10.253229533304";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:16:"9.44229931708771";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"9.30271913616493";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>Today, while messing around with an old backup disk, I found a DirectX 9 project I made back in 2005. It is an application that renders a 3D room and allows the user to navigate inside it in first person camera. I developed this application to test a 3D engine I was developing at the time. The video below shows the 3D application in action.</p>
+<p>[field name="iframe"]</p>
+<p>&nbsp;</p>
+<p><em>I will just share the main file module of the project. To get the rest of the 3D engine files, consider following me on <a title="Go there and follow me" rel="nofollow" href="http://twitter.com/codentronix">twitter</a> or <a title="Go to my Facebook page and click Like" rel="nofollow" href="http://facebook.com/codentronix">facebook</a>, or ask in the <a title="Contact" href="http://codentronix.com/contact/">contact page</a>. Don't hesitate to leave a comment if you a have a doubt or suggestion.</em></p>
+<p><em><!--more--></em></p>
+<h2>How it works</h2>
+<p>You navigate in the room using the arrow keys. The possible moviments are:</p>
+<ul>
+<li>Move forward/backward</li>
+<li>Move left/right</li>
+<li>Strafe left/right</li>
+<li>Look down/up</li>
+</ul>
+<p>I developed the application using C++ and DirectX 9. The application is based on a 3D engine I was developing at the time. The main aim of the engine was to facilitate the creation of windows applications and at the same time make easy the creation of cool 3D games. The engine facilitated setting up DirectX, playing sounds and music, loading 3D models, creating worlds, and making navigations in first person as well as in third person (just to name a few).</p>
+<p><span style="font-size: 20px; font-weight: bold;">The Code</span></p>
+<p>The main module is divided in two files: <strong>main.cpp</strong> and <strong>main.h</strong>. Below is the code for the <strong>main.h</strong> file.</p>
+<p>[cpp]<br />
+#ifndef __MAIN_H__<br />
+#define __MAIN_H__</p>
+<p>#include &lt;windows.h&gt;<br />
+#include &quot;application.h&quot;<br />
+#include &quot;graphics.h&quot;<br />
+#include &quot;camera.h&quot;</p>
+<p>typedef struct {<br />
+ float x,y,z;<br />
+ float u,v;<br />
+}VERTEX;</p>
+<p>#define VERTEX_FVF		D3DFVF_XYZ | D3DFVF_TEX1</p>
+<p>#define WORLD_X			10<br />
+#define WORLD_Y			9</p>
+<p>#define NUM_WALL_VERTICES	24<br />
+#define NUM_CEIL_VERTICES	6<br />
+#define NUM_FLOOR_VERTICES	6</p>
+<p>#define NUM_CEIL_TRI		(NUM_CEIL_VERTICES / 3)<br />
+#define NUM_WALL_TRI		(NUM_WALL_VERTICES / 3)<br />
+#define NUM_FLOOR_TRI		(NUM_FLOOR_VERTICES / 3)</p>
+<p>#define WALL_VB_SIZE		NUM_WALL_VERTICES * sizeof(VERTEX)<br />
+#define CEIL_VB_SIZE		NUM_CEIL_VERTICES * sizeof(VERTEX)<br />
+#define FLOOR_VB_SIZE		NUM_FLOOR_VERTICES * sizeof(VERTEX)</p>
+<p>#define KEYDOWN(x)		(GetAsyncKeyState(x) &amp; 0x8000)</p>
+<p>class c3DRoom : public cApplication {<br />
+ cGraphics *m_pGfx;<br />
+ cCAMERA   m_Camera;<br />
+ IDirect3DVertexBuffer9 *m_pVBWall;<br />
+ IDirect3DVertexBuffer9 *m_pVBCeil;<br />
+ IDirect3DVertexBuffer9 *m_pVBFloor;<br />
+ IDirect3DTexture9	*m_pTextures[3];<br />
+ BOOL m_bFullScreen;</p>
+<p>public:<br />
+ c3DRoom();<br />
+ ~c3DRoom();</p>
+<p> BOOL InitScene();<br />
+ BOOL Init();<br />
+ void CheckInput();<br />
+ void RenderScene();<br />
+ BOOL DoFrame();<br />
+ BOOL ShutDown();<br />
+};<br />
+#endif<br />
+[/cpp]</p>
+<p>Next is the code for the <strong>main.cpp</strong> file.</p>
+<p>[cpp]<br />
+#include &quot;main.h&quot;</p>
+<p>VERTEX WallVtx[NUM_WALL_VERTICES] = {<br />
+ // 1o Triângulo, face frontal<br />
+ -1,1,-1,0,0,<br />
+ 1,1,-1,1,0,<br />
+ -1,-1,-1,0,1,<br />
+ // 2o Triângulo, face frontal<br />
+ 1,1,-1,1,0,<br />
+ 1,-1,-1,1,1,<br />
+ -1,-1,-1,0,1,<br />
+ // 1o Triângulo, face lateral direita<br />
+ 1,1,-1,0,0,<br />
+ 1,1,1,1,0,<br />
+ 1,-1,-1,0,1,<br />
+ // 2o Triângulo, face lateral direita<br />
+ 1,1,1,1,0,<br />
+ 1,-1,1,1,1,<br />
+ 1,-1,-1,0,1,<br />
+ // 1o Triângulo, face lateral esquerda<br />
+ -1,1,-1,1,0,<br />
+ -1,-1,1,0,1,<br />
+ -1,1,1,0,0,<br />
+ // 2o Triângulo, face lateral esquerda<br />
+ -1,1,-1,1,0,<br />
+ -1,-1,-1,1,1,<br />
+ -1,-1,1,0,1,<br />
+ // 1o Triângulo, face traseira<br />
+ 1,1,1,0,0,<br />
+ -1,1,1,1,0,<br />
+ 1,-1,1,0,1,<br />
+ // 2o Triângulo, face traseira<br />
+ 1,-1,1,0,1,<br />
+ -1,1,1,1,0,<br />
+ -1,-1,1,1,1<br />
+};</p>
+<p>VERTEX CeilVtx[NUM_CEIL_VERTICES] = {<br />
+ // 1o Triângulo<br />
+ 1,1,1,1,1,<br />
+ -1,1,1,0,1,<br />
+ -1,1,-1,0,0,<br />
+ // 2o Triângulo<br />
+ -1,1,-1,0,0,<br />
+ 1,1,-1,1,0,<br />
+ 1,1,1,1,1<br />
+};</p>
+<p>VERTEX FloorVtx[NUM_CEIL_VERTICES] = {<br />
+ // 1o Triângulo<br />
+ -1,0,1,0,0,<br />
+ 1,0,1,1,0,<br />
+ -1,0,-1,0,1,<br />
+ // 2o Triângulo<br />
+ 1,0,1,1,0,<br />
+ 1,0,-1,1,1,<br />
+ -1,0,-1,0,1<br />
+};</p>
+<p>int iWallMap[WORLD_Y][WORLD_X] = {<br />
+ 1,1,1,1,1,1,1,1,1,1,<br />
+ 1,0,0,0,0,0,0,0,0,1,<br />
+ 1,0,1,0,0,0,0,1,0,1,<br />
+ 1,0,1,0,0,0,0,1,0,1,<br />
+ 1,0,0,0,0,0,0,1,0,1,<br />
+ 1,0,1,0,0,0,0,1,0,1,<br />
+ 1,0,1,0,1,1,1,1,0,1,<br />
+ 1,0,0,0,0,0,0,0,0,1,<br />
+ 1,1,1,1,1,1,1,1,1,1};</p>
+<p>c3DRoom::c3DRoom()<br />
+{<br />
+  m_pTextures[0] = m_pTextures[1] = m_pTextures[2] = NULL;<br />
+  m_pVBWall  = NULL;<br />
+  m_pVBCeil  = NULL;<br />
+  m_pVBFloor = NULL;</p>
+<p>  m_dwWidth = 400;<br />
+  m_dwHeight = 350;<br />
+  m_dwStyle = WS_OVERLAPPEDWINDOW;<br />
+  m_dwExStyle = 0;<br />
+  m_bFullScreen = FALSE;</p>
+<p>  strcpy(m_szClass,&quot;3DRoomClass&quot;);<br />
+  strcpy(m_szCaption,&quot;3D Room by Leonel Machava&quot;);<br />
+}</p>
+<p>BOOL c3DRoom::InitScene()<br />
+{<br />
+  IDirect3DDevice9 *pDevice;<br />
+  D3DXMATRIX matWorld,matView,matProj;<br />
+  RECT rcClient;</p>
+<p>  pDevice = Graphics()-&gt;GetDevice();</p>
+<p>  if( FAILED(D3DXCreateTextureFromFile(pDevice,&quot;Media\\wall2.bmp&quot;,&amp;m_pTextures[0])) ||<br />
+    FAILED(D3DXCreateTextureFromFile(pDevice,&quot;Media\\floor.bmp&quot;,&amp;m_pTextures[1])) ||<br />
+    FAILED(D3DXCreateTextureFromFile(pDevice,&quot;Media\\ceil1.bmp&quot;,&amp;m_pTextures[2])) )<br />
+    return( FALSE );</p>
+<p>  if( FAILED(pDevice-&gt;CreateVertexBuffer(WALL_VB_SIZE,D3DUSAGE_WRITEONLY,VERTEX_FVF,<br />
+                                         D3DPOOL_MANAGED,&amp;m_pVBWall,NULL)) )<br />
+    return( FALSE );</p>
+<p>  if( FAILED(pDevice-&gt;CreateVertexBuffer(CEIL_VB_SIZE,D3DUSAGE_WRITEONLY,VERTEX_FVF,<br />
+                                         D3DPOOL_MANAGED,&amp;m_pVBCeil,NULL)) )<br />
+    return( FALSE );</p>
+<p>  if( FAILED(pDevice-&gt;CreateVertexBuffer(FLOOR_VB_SIZE,D3DUSAGE_WRITEONLY,VERTEX_FVF,<br />
+                                         D3DPOOL_MANAGED,&amp;m_pVBFloor,NULL)) )<br />
+   return( FALSE );</p>
+<p>  Graphics()-&gt;FillVertexBuffer(m_pVBWall,WallVtx,0,WALL_VB_SIZE);<br />
+  Graphics()-&gt;FillVertexBuffer(m_pVBCeil,CeilVtx,0,CEIL_VB_SIZE);<br />
+  Graphics()-&gt;FillVertexBuffer(m_pVBFloor,FloorVtx,0,FLOOR_VB_SIZE);</p>
+<p>  pDevice-&gt;SetRenderState(D3DRS_LIGHTING,FALSE);<br />
+  pDevice-&gt;SetSamplerState(0,D3DSAMP_MINFILTER,D3DTEXF_LINEAR);<br />
+  pDevice-&gt;SetSamplerState(0,D3DSAMP_MAGFILTER,D3DTEXF_LINEAR);<br />
+  pDevice-&gt;SetSamplerState(0,D3DSAMP_MIPFILTER,D3DTEXF_LINEAR);</p>
+<p>  GetClientRect(GetHWnd(),&amp;rcClient);<br />
+  m_Camera.GetMatrix(&amp;matView);</p>
+<p>  D3DXMatrixIdentity(&amp;matWorld);<br />
+  D3DXMatrixPerspectiveFovLH(&amp;matProj,D3DX_PI / 4.0,(float)rcClient.right / rcClient.bottom,1.0,1000.f);</p>
+<p>  pDevice-&gt;SetTransform(D3DTS_WORLD,&amp;matWorld);<br />
+  pDevice-&gt;SetTransform(D3DTS_VIEW,&amp;matView);<br />
+  pDevice-&gt;SetTransform(D3DTS_PROJECTION,&amp;matProj);</p>
+<p>  return( TRUE );<br />
+}</p>
+<p>BOOL c3DRoom::Init()<br />
+{<br />
+  m_pGfx = new cGraphics;</p>
+<p>  m_Camera.SetPosition(1,0,-7);</p>
+<p>  if( !Graphics()-&gt;Init(GetHWnd(),0,0,TRUE,D3DFMT_UNKNOWN,D3DFMT_D16) )<br />
+  {<br />
+    MessageBox(GetHWnd(),&quot;Não foi possível inicializar os gráficos&quot;,&quot;Erro&quot;,MB_OK);<br />
+    return( FALSE );<br />
+  }</p>
+<p>  if( !InitScene() )<br />
+  {<br />
+    MessageBox(GetHWnd(),&quot;Não foi possível inicializar a cena&quot;,&quot;Erro&quot;,MB_OK);<br />
+    return( FALSE );<br />
+  }</p>
+<p>  return( TRUE );<br />
+}</p>
+<p>BOOL c3DRoom::ShutDown()<br />
+{<br />
+  SAFE_RELEASE(m_pTextures[0]);<br />
+  SAFE_RELEASE(m_pTextures[1]);<br />
+  SAFE_RELEASE(m_pTextures[2]);<br />
+  SAFE_RELEASE(m_pVBWall);<br />
+  SAFE_RELEASE(m_pVBCeil);<br />
+  SAFE_RELEASE(m_pVBFloor);</p>
+<p>  Graphics()-&gt;Close();</p>
+<p>  delete m_pGfx;</p>
+<p>  return( TRUE );<br />
+}</p>
+<p>void c3DRoom::CheckInput()<br />
+{<br />
+  if( KEYDOWN(VK_UP) )	m_Camera.Walk(0.10f);</p>
+<p>  if( KEYDOWN(VK_DOWN) )	m_Camera.Walk(-0.10f);</p>
+<p>  if( KEYDOWN(VK_LEFT) )	m_Camera.Yaw(-0.02f);</p>
+<p>  if( KEYDOWN(VK_RIGHT) ) m_Camera.Yaw(0.02f);</p>
+<p>  if( KEYDOWN(VK_PRIOR) )	m_Camera.Pitch(0.02f);</p>
+<p>  if( KEYDOWN(VK_NEXT) )	m_Camera.Pitch(-0.02f);</p>
+<p>  if( KEYDOWN('A') )		m_Camera.Strafe(-0.1f);</p>
+<p>  if( KEYDOWN('D') )		m_Camera.Strafe(0.1f);<br />
+}</p>
+<p>void c3DRoom::RenderScene()<br />
+{<br />
+  float xPos,zPos;<br />
+  int i,j;</p>
+<p>  IDirect3DDevice9 *pDevice;<br />
+  D3DXMATRIX matView,matWorld;</p>
+<p>  Graphics()-&gt;ClearAll(D3DCOLOR_XRGB(0,0xF0,0),1.0);<br />
+  Graphics()-&gt;BeginScene();</p>
+<p>  pDevice = Graphics()-&gt;GetDevice();<br />
+  pDevice-&gt;SetFVF(VERTEX_FVF);</p>
+<p>  m_Camera.GetMatrix(&amp;matView);<br />
+  pDevice-&gt;SetTransform(D3DTS_VIEW,&amp;matView);</p>
+<p>  pDevice-&gt;SetStreamSource(0,m_pVBFloor,0,sizeof(VERTEX));<br />
+  pDevice-&gt;SetTexture(0,m_pTextures[1]);</p>
+<p>  for( i = 0,zPos = 5; i &lt; WORLD_Y; i++ )<br />
+  {<br />
+    xPos = -5;<br />
+    for( j = 0; j &lt; WORLD_X; j++ )<br />
+    {<br />
+      D3DXMatrixTranslation(&amp;matWorld,xPos,-1,zPos);<br />
+//    if( 0 == iWallMap[i][j] )<br />
+      {<br />
+        pDevice-&gt;SetTransform(D3DTS_WORLD,&amp;matWorld);<br />
+        pDevice-&gt;DrawPrimitive(D3DPT_TRIANGLELIST,0,NUM_FLOOR_TRI);<br />
+      }<br />
+      xPos += 2;<br />
+    }<br />
+    zPos -= 2;<br />
+  }</p>
+<p>  pDevice-&gt;SetStreamSource(0,m_pVBCeil,0,sizeof(VERTEX));<br />
+  pDevice-&gt;SetTexture(0,m_pTextures[2]);</p>
+<p>  for( i = 0,zPos = 5; i &lt; WORLD_Y; i++ )<br />
+  {<br />
+    xPos = -5;<br />
+    for( j = 0; j &lt; WORLD_X; j++ )<br />
+    {<br />
+      D3DXMatrixTranslation(&amp;matWorld,xPos,0,zPos);<br />
+//    if( 0 == iWallMap[i][j] )<br />
+      {<br />
+        pDevice-&gt;SetTransform(D3DTS_WORLD,&amp;matWorld);<br />
+        pDevice-&gt;DrawPrimitive(D3DPT_TRIANGLELIST,0,NUM_CEIL_TRI);<br />
+      }<br />
+    xPos += 2;<br />
+    }<br />
+    zPos -= 2;<br />
+  }</p>
+<p>  pDevice-&gt;SetStreamSource(0,m_pVBWall,0,sizeof(VERTEX));<br />
+  pDevice-&gt;SetTexture(0,m_pTextures[0]);</p>
+<p>  for( i = 0,zPos = 5; i &lt; WORLD_Y; i++ )<br />
+  {<br />
+    xPos = -5;<br />
+    for( j = 0; j &lt; WORLD_X; j++ )<br />
+    {<br />
+      D3DXMatrixTranslation(&amp;matWorld,xPos,0,zPos);<br />
+      if( iWallMap[i][j] != 0 )<br />
+      {<br />
+        pDevice-&gt;SetTransform(D3DTS_WORLD,&amp;matWorld);<br />
+        pDevice-&gt;DrawPrimitive(D3DPT_TRIANGLELIST,0,NUM_WALL_TRI);<br />
+      }<br />
+      xPos += 2;<br />
+    }<br />
+    zPos -= 2;<br />
+  }</p>
+<p>  pDevice-&gt;SetTexture(0,NULL);<br />
+  Graphics()-&gt;EndScene();<br />
+  Graphics()-&gt;Flip();<br />
+}</p>
+<p>BOOL c3DRoom::DoFrame()<br />
+{<br />
+  CheckInput();<br />
+  RenderScene();<br />
+  return( TRUE );<br />
+}</p>
+<p>c3DRoom::~c3DRoom()<br />
+{<br />
+  //NOP<br />
+}</p>
+<p>int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,<br />
+ LPSTR lpCmdLine,int nShowCmd)<br />
+{<br />
+  c3DRoom cApp;</p>
+<p>  return( cApp.Run() );<br />
+}<br />
+[/cpp]</p>
+<p>In the next days I will share other projects of mine that I made a while ago. If you want to stay updated, you can <a title="Subscribe by email" rel="nofollow" href="http://feedburner.google.com/fb/a/mailverify?uri=codentronix&amp;loc=en_US">subscribe by email</a>.</p>
+<p><em>If you like this article please share it by clicking one of the buttons below, follow me on <a title="My twitter" href="http://twitter.com/codentronix" target="_blank">twitter</a>, or <a href="http://feeds.feedburner.com/codentronix" target="_blank">register on my RSS</a> to receive article updates. Thanks!</em></p>

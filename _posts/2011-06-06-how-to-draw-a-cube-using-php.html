@@ -1,0 +1,161 @@
+---
+layout: post
+title: How to Draw A Cube Using PHP
+categories:
+- PHP
+- Programming
+- Web Development
+tags:
+- 3d
+- GD
+- php
+- php tips
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  iframe: <iframe src="http://codentronix.com/projects/php/tricks/php_cube.html" width="450"
+    height="350" frameborder="0"> </iframe>
+  og_image: http://codentronix.com/projects/php/tricks/php_cube.php
+  og_description: PHP is one of the most used languages for web development, and it
+    is often used to generate HTML pages. Today, I will show you how to use it to
+    make something different. We will make a script to draw a 3D cube.
+  views: '15499'
+  _stcr@_bigorangemachine@hotmail.com: '2011-08-31 07:13:59|Y'
+  _stcr@_WilcoxGlendenning1773@yahoomail.com: '2012-04-08 19:43:08|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400452775'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"207";s:5:"score";s:16:"118.877881879108";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:15:"34.165992853651";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"24.8673974339199";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:15:"18.511289773224";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"17.1249954121041";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"14.3524066898643";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"647";s:5:"score";s:16:"11.9117882438231";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:16:"10.7688877514082";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"10.7688877514082";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"8.57166317407201";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>PHP is one of the most used languages for web development, and it is often used to generate HTML pages. Today, I will show you how to use it to make something different. We will make a script to draw a 3D cube.</p>
+<p><strong>The image below shows an output from the PHP script. Click the image to draw another cube.</strong></p>
+<p>[field name="iframe"]</p>
+<p><!--more--></p>
+<p><strong>NOTE:</strong> PHP is often used to output text content, however it can also output images (really, it can output pretty much anything). To draw images I relied on the GD library. If you have never used the GD library, consider reading the tutorial <a title="Generating Images with PHP" href="http://codentronix.com/2011/04/17/generating-images-with-php/">Generating Images with PHP</a>.</p>
+<h2>Code</h2>
+<p>Before checking the code let me remember you that a cube is made of 8 vertices and 6 faces. I guess the code is pretty much self-explanatory, so I will not give too much detail.</p>
+<p>When drawing the cube, we must draw only the faces that are visible. In 3D computer graphics theory, this is called the "visibility problem", and there are some algorithms, called hidden surface algorithms, which solve this problem. The Painter's Algorithm is one of them, and solves the problem drawing the faces from back to front. To do this, we calculate the average Z value of each face, then we sort them, and finally we draw them in descending order of the Z value.</p>
+<p>[php gutter="false"]<br />
+&lt;?php<br />
+/**<br />
+ * This script draws and outputs a Cube.<br />
+ *<br />
+ * The GD library is used to draw the cube and output it as a<br />
+ * PNG image.<br />
+ *<br />
+ * Developed by Leonel Machava &lt;leonelmachava@gmail.com&gt;<br />
+ * http://codentronix.com<br />
+ *<br />
+ * This code is released under the &quot;MIT License&quot; available at<br />
+ * http://www.opensource.org/licenses/mit-license.php<br />
+ */</p>
+<p>/* Represents points in 3D space. */<br />
+class Point3D {<br />
+  public $x;<br />
+  public $y;<br />
+  public $z;</p>
+<p>  public function __construct($x,$y,$z) {<br />
+    $this-&gt;x = $x;<br />
+    $this-&gt;y = $y;<br />
+    $this-&gt;z = $z;<br />
+  }</p>
+<p>  public function rotateX($angle) {<br />
+    $rad = $angle * M_PI / 180;<br />
+    $cosa = cos($rad);<br />
+    $sina = sin($rad);<br />
+    $y = $this-&gt;y * $cosa - $this-&gt;z * $sina;<br />
+    $z = $this-&gt;y * $sina + $this-&gt;z * $cosa;<br />
+    return new Point3D($this-&gt;x, $y, $z);<br />
+  }</p>
+<p>  public function rotateY($angle) {<br />
+    $rad = $angle * M_PI / 180;<br />
+    $cosa = cos($rad);<br />
+    $sina = sin($rad);<br />
+    $z = $this-&gt;z * $cosa - $this-&gt;x * $sina;<br />
+    $x = $this-&gt;z * $sina + $this-&gt;x * $cosa;<br />
+    return new Point3D($x, $this-&gt;y, $z);<br />
+  }</p>
+<p>  public function rotateZ($angle) {<br />
+    $rad = $angle * M_PI / 180;<br />
+    $cosa = cos($rad);<br />
+    $sina = sin($rad);<br />
+    $x = $this-&gt;x * $cosa - $this-&gt;y * $sina;<br />
+    $y = $this-&gt;x * $sina + $this-&gt;y * $cosa;<br />
+    return new Point3D($x, $y, $this-&gt;z);<br />
+  }</p>
+<p>  public function project($width,$height,$fov,$viewerDistance) {<br />
+    $factor = (float)($fov) / ($viewerDistance + $this-&gt;z);<br />
+    $x = $this-&gt;x * $factor + $width / 2;<br />
+    $y = -$this-&gt;y * $factor + $height / 2;<br />
+    return new Point3D($x,$y,$this-&gt;z);<br />
+  }<br />
+}</p>
+<p>/* Define the 8 vertices of the cube. */<br />
+$vertices = array(<br />
+  new Point3D(-1,1,-1),<br />
+  new Point3D(1,1,-1),<br />
+  new Point3D(1,-1,-1),<br />
+  new Point3D(-1,-1,-1),<br />
+  new Point3D(-1,1,1),<br />
+  new Point3D(1,1,1),<br />
+  new Point3D(1,-1,1),<br />
+  new Point3D(-1,-1,1)<br />
+);</p>
+<p>/* Define the vertices that compose each of the 6 faces. These numbers are<br />
+   indices to the vertex list defined above. */<br />
+$faces = array(array(0,1,2,3),array(1,5,6,2),array(5,4,7,6),array(4,0,3,7),array(0,4,5,1),array(3,2,6,7));</p>
+<p>/* Define colors for each face. */<br />
+$colors = array(array(255,0,255),array(255,0,0),array(0,255,0),array(0,0,255),array(0,255,255),array(255,255,0));</p>
+<p>/* Create the image. */<br />
+$im = imagecreatetruecolor(400,300);</p>
+<p>$im_colors = array();</p>
+<p>foreach( $colors as $color ) {<br />
+  $im_colors[] = imagecolorallocate($im,$color[0],$color[1],$color[2]);<br />
+}</p>
+<p>/* Assign random values for the angles that describe the cube orientation. */<br />
+$angleX = rand() * 15;<br />
+$angleZ = rand() * -30;<br />
+$angleY = rand() * -30;</p>
+<p>/* It will store transformed vertices. */<br />
+$t = array();</p>
+<p>/* Transform all the vertices. */<br />
+foreach( $vertices as $v ) {<br />
+  $t[] = $v-&gt;rotateX($angleX)-&gt;rotateY($angleY)-&gt;rotateZ($angleZ)-&gt;project(400,300,256,4);<br />
+}</p>
+<p>/* When drawing the cube we must be careful to draw only the faces that are visible.<br />
+   We do that by using the Painter's Algorithm, which consists in drawing the faces<br />
+   from back to front.<br />
+   Note that other algorithms do exist, and are classified as HIDDEN SURFACE REMOVAL<br />
+   ALGORITHMS. */</p>
+<p>/* It will store the average Z value of each face. */<br />
+$avgZ = array();</p>
+<p>/* Calculate the average Z value of each face. */<br />
+foreach( $faces as $index=&gt;$f ) {<br />
+  $avgZ[&quot;$index&quot;] = ($t[$f[0]]-&gt;z + $t[$f[1]]-&gt;z + $t[$f[2]]-&gt;z + $t[$f[3]]-&gt;z) / 4.0;<br />
+}</p>
+<p>/* Sort the array in descending order. */<br />
+arsort($avgZ);</p>
+<p>/* Draw the faces from back to front. */<br />
+foreach( $avgZ as $index=&gt;$z ) {<br />
+  $f = $faces[$index];<br />
+  $points = array(<br />
+    $t[$f[0]]-&gt;x,$t[$f[0]]-&gt;y,<br />
+    $t[$f[1]]-&gt;x,$t[$f[1]]-&gt;y,<br />
+    $t[$f[2]]-&gt;x,$t[$f[2]]-&gt;y,<br />
+    $t[$f[3]]-&gt;x,$t[$f[3]]-&gt;y<br />
+  );<br />
+  imagefilledpolygon($im,$points,4,$im_colors[$index]);<br />
+}</p>
+<p>/* Tell the browser/client we are outputing a PNG image. */<br />
+header(&quot;Content-Type: image/png&quot;);</p>
+<p>/* Output the image. */<br />
+imagepng($im);<br />
+[/php]</p>
+<p><em>If you like this article please share it by clicking one of the buttons below, follow me on <a title="My twitter" href="http://twitter.com/codentronix" target="_blank">twitter</a>, or <a href="http://feeds.feedburner.com/codentronix" target="_blank">register on my RSS</a> to receive article updates. Thanks!</em></p>

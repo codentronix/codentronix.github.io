@@ -1,0 +1,158 @@
+---
+layout: post
+title: ! 'HTML5 Experiment: A Rotating Solid Cube'
+categories:
+- HTML5
+- Lab
+tags:
+- 3d
+- html5 demo
+- javascript
+status: publish
+type: post
+published: true
+meta:
+  views: '32512'
+  og_image: http://codentronix.com/projects/html5/html5-logo.png
+  _edit_last: '1'
+  iframe: <iframe src="http://codentronix.com/projects/html5/demos/solid_cube.php?iframe=1"
+    width="450" height="300" frameborder="0"></iframe>
+  _syntaxhighlighter_encoded: '1'
+  og_video: http://www.youtube.com/v/u89RJV3Uk0o
+  _stcr@_shikhar.sahdev@gmail.com: '2012-01-15 13:18:47|Y'
+  _stcr@_amirmonfared37@yahoo.com: '2012-01-16 09:31:44|Y'
+  _stcr@_krishna4it@gmail.com: '2012-02-02 07:41:39|Y'
+  _stcr@_pify@live.fr: '2013-07-31 19:24:45|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400454303'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:14:"57.61157129721";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:15:"56.974663834223";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"668";s:5:"score";s:16:"35.1574599270538";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:16:"15.6861591791385";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"15.6861591791385";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:15:"13.298082604943";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"647";s:5:"score";s:16:"11.4655011411947";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"558";s:5:"score";s:16:"8.32826930536697";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"8.32826930536697";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"8.32826930536697";}}
+  _stcr@_info@britanniacommunications.com: '2014-02-21 19:44:45|Y'
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>Previously I shared an HTML5 experiment consisting of a rotating <a title="First Experiment with HTML5: a Wireframe Cube" href="http://codentronix.com/2011/04/27/first-experiment-with-html5-a-wireframe-cube/">wireframe cube</a>. Today, I will share a new experiment that makes a rotating solid cube. This experiment is largely based on the <a title="First Experiment with HTML5: a Wireframe Cube" href="http://codentronix.com/2011/04/27/first-experiment-with-html5-a-wireframe-cube/">wireframe cube</a> experiment.</p>
+<p>To run this experiment you need a browser that supports the HTML5 canvas element. You should see a rotating solid cube below if your browser supports the canvas element. If not, you should consider upgrading your browser to the latest version.</p>
+<p>[field name="iframe"]</p>
+<h2>The Code</h2>
+<p>Please leave a comment if you have any doubt, comment, or suggestion regarding this code.</p>
+<p>[javascript htmlscript="false"]<br />
+&lt;!DOCTYPE html&gt;<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+    &lt;title&gt;HTML5 Experiment: A Rotating Solid Cube&lt;/title&gt;<br />
+    &lt;script type=&quot;text/javascript&quot;&gt;<br />
+        window.onload = startDemo;</p>
+<p>        function Point3D(x,y,z) {<br />
+            this.x = x;<br />
+            this.y = y;<br />
+            this.z = z;</p>
+<p>            this.rotateX = function(angle) {<br />
+                var rad, cosa, sina, y, z<br />
+                rad = angle * Math.PI / 180<br />
+                cosa = Math.cos(rad)<br />
+                sina = Math.sin(rad)<br />
+                y = this.y * cosa - this.z * sina<br />
+                z = this.y * sina + this.z * cosa<br />
+                return new Point3D(this.x, y, z)<br />
+            }</p>
+<p>            this.rotateY = function(angle) {<br />
+                var rad, cosa, sina, x, z<br />
+                rad = angle * Math.PI / 180<br />
+                cosa = Math.cos(rad)<br />
+                sina = Math.sin(rad)<br />
+                z = this.z * cosa - this.x * sina<br />
+                x = this.z * sina + this.x * cosa<br />
+                return new Point3D(x,this.y, z)<br />
+            }</p>
+<p>            this.rotateZ = function(angle) {<br />
+                var rad, cosa, sina, x, y<br />
+                rad = angle * Math.PI / 180<br />
+                cosa = Math.cos(rad)<br />
+                sina = Math.sin(rad)<br />
+                x = this.x * cosa - this.y * sina<br />
+                y = this.x * sina + this.y * cosa<br />
+                return new Point3D(x, y, this.z)<br />
+            }</p>
+<p>            this.project = function(viewWidth, viewHeight, fov, viewDistance) {<br />
+                var factor, x, y<br />
+                factor = fov / (viewDistance + this.z)<br />
+                x = this.x * factor + viewWidth / 2<br />
+                y = this.y * factor + viewHeight / 2<br />
+                return new Point3D(x, y, this.z)<br />
+            }<br />
+        }</p>
+<p>        var vertices = [<br />
+            new Point3D(-1,1,-1),<br />
+            new Point3D(1,1,-1),<br />
+            new Point3D(1,-1,-1),<br />
+            new Point3D(-1,-1,-1),<br />
+            new Point3D(-1,1,1),<br />
+            new Point3D(1,1,1),<br />
+            new Point3D(1,-1,1),<br />
+            new Point3D(-1,-1,1)<br />
+        ];</p>
+<p>        // Define the vertices that compose each of the 6 faces. These numbers are<br />
+        // indices to the vertex list defined above.<br />
+        var faces  = [[0,1,2,3],[1,5,6,2],[5,4,7,6],[4,0,3,7],[0,4,5,1],[3,2,6,7]];</p>
+<p>        // Define the colors for each face.<br />
+        var colors = [[255,0,0],[0,255,0],[0,0,255],[255,255,0],[0,255,255],[255,0,255]];</p>
+<p>        var angle = 0;</p>
+<p>        /* Constructs a CSS RGB value from an array of 3 elements. */<br />
+        function arrayToRGB(arr) {<br />
+            if( arr.length == 3 ) {<br />
+                return &quot;rgb(&quot; + arr[0] + &quot;,&quot; + arr[1] + &quot;,&quot; + arr[2] + &quot;)&quot;;<br />
+            }<br />
+            return &quot;rgb(0,0,0)&quot;;<br />
+        }</p>
+<p>        function startDemo() {<br />
+            canvas = document.getElementById(&quot;thecanvas&quot;);<br />
+            if( canvas &amp;&amp; canvas.getContext ) {<br />
+                ctx = canvas.getContext(&quot;2d&quot;);<br />
+                setInterval(loop,33);<br />
+            }<br />
+        }</p>
+<p>        function loop() {<br />
+            var t = new Array();</p>
+<p>            ctx.fillStyle = &quot;rgb(0,0,0)&quot;;<br />
+            ctx.fillRect(0,0,400,250);</p>
+<p>            for( var i = 0; i &lt; vertices.length; i++ ) {<br />
+                var v = vertices[i];<br />
+                var r = v.rotateX(angle).rotateY(angle);<br />
+                var p = r.project(400,250,200,4);<br />
+                t.push(p)<br />
+            }</p>
+<p>            var avg_z = new Array();</p>
+<p>            for( var i = 0; i &lt; faces.length; i++ ) {<br />
+                var f = faces[i];<br />
+                avg_z[i] = {&quot;index&quot;:i, &quot;z&quot;:(t[f[0]].z + t[f[1]].z + t[f[2]].z + t[f[3]].z) / 4.0};<br />
+            }</p>
+<p>            avg_z.sort(function(a,b) {<br />
+                return b.z - a.z;<br />
+            });</p>
+<p>            for( var i = 0; i &lt; faces.length; i++ ) {<br />
+                var f = faces[avg_z[i].index]</p>
+<p>                ctx.fillStyle = arrayToRGB(colors[avg_z[i].index]);<br />
+                ctx.beginPath()<br />
+                ctx.moveTo(t[f[0]].x,t[f[0]].y)<br />
+                ctx.lineTo(t[f[1]].x,t[f[1]].y)<br />
+                ctx.lineTo(t[f[2]].x,t[f[2]].y)<br />
+                ctx.lineTo(t[f[3]].x,t[f[3]].y)<br />
+                ctx.closePath()<br />
+                ctx.fill()<br />
+            }<br />
+            angle += 2<br />
+        }<br />
+    &lt;/script&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+        &lt;canvas id=&quot;thecanvas&quot; width=&quot;400&quot; height=&quot;250&quot;&gt;<br />
+        Your browser does not support the HTML5 canvas element. &lt;a href=#&gt;Click here&lt;/a&gt; to watch the video.<br />
+    &lt;/canvas&gt;</p>
+<p>    &lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/javascript]</p>
+<p><em>If you liked this experiment, please consider leaving a comment, sharing this post using one of the buttons below, or <a href="http://feeds.feedburner.com/codentronix">subscribing to the blog</a>.<br />
+</em></p>

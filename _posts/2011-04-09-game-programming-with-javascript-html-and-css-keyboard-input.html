@@ -1,0 +1,280 @@
+---
+layout: post
+title: ! 'Game Programming with JavaScript, HTML and CSS: keyboard input'
+categories:
+- Game Programming
+- JavaScript
+tags:
+- css
+- game programming
+- html
+- javascript
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  views: '2727'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400468613'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"135.799469961284";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"30.9944531272602";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:16:"30.1287402981086";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"30.1287402981086";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:15:"30.062273666161";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"396";s:5:"score";s:16:"15.6861591791385";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"668";s:5:"score";s:16:"11.6699923967304";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"8.56116003542438";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"155";s:5:"score";s:16:"7.87147906409092";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"579";s:5:"score";s:16:"6.93147180559945";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In the <a title="Game Programming with JavaScript, HTML and CSS: Introduction" href="http://codentronix.com/2011/04/07/game-programming-with-javascript-html-and-css-introduction/">last tutorial</a> we covered the concept of the game loop and applied it to make a simple animation. Drawing upon the code of the <a title="Game Programming with JavaScript, HTML and CSS: Introduction" href="http://codentronix.com/2011/04/07/game-programming-with-javascript-html-and-css-introduction/">last tutorial</a>, we will add a box that we will be controlled using the keyboard. After you finish this tutorial you will see how easy it is to add keyboard input to your games.</p>
+<p><a href="http://codentronix.com/wp-content/uploads/2011/04/tut2.html" target="_blank">Click here</a> to see what you will accomplish in this tutorial.</p>
+<p>What you will need:</p>
+<ul>
+<li>Any text editor of your choice.</li>
+<li>A browser to run the code.</li>
+</ul>
+<p>The HTML Structure</p>
+<p>[code lang="javascript" htmlscript="true"]<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+  &lt;title&gt;Game Programming with JavaScript, HTML and CSS: Introduction&lt;/title&gt;</p>
+<p>  &lt;style type='text/css'&gt;<br />
+    #game_region {<br />
+      width: 600px;<br />
+      height: 400px;<br />
+      background-color: black;<br />
+      position:relative;<br />
+    }</p>
+<p>    #box {<br />
+      width: 48px;<br />
+      height: 48px;<br />
+      background-color: white;<br />
+      position: absolute;<br />
+      left: 280px;<br />
+      top: 180px;<br />
+    }</p>
+<p>    #help {<br />
+      font-size: 16px;<br />
+      font-weight: bold;<br />
+      padding: 10px;<br />
+      color: green;<br />
+    }</p>
+<p>    #keyb_box {<br />
+      width: 64px;<br />
+      height: 16px;<br />
+      background-color: yellow;<br />
+      position: absolute;<br />
+      left: 200px;<br />
+      bottom: 15px;<br />
+    }<br />
+  &lt;/style&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+  &lt;div id='game_region'&gt;<br />
+    &lt;div id='box'&gt;&lt;/div&gt;<br />
+    &lt;div id='keyb_box'&gt;&lt;/div&gt;<br />
+  &lt;/div&gt;<br />
+  &lt;p id='help'&gt;USE THE LEFT AND RIGHT KEY ARROWS TO MOVE THE YELLOW BOX&lt;/p&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/code]</p>
+<p>Save this code and run it on a browser. You should see a black region with one white box and yellow box inside like what is seen in the screenshot below. Our goal in this tutorial is to move the yellow box according to input received from the keyboard. The white box will be animated with code borrowed from the last tutorial.</p>
+<p><a href="http://codentronix.com/wp-content/uploads/2011/04/screenshot1.jpg"><img class="alignnone size-medium wp-image-121" title="screenshot" src="http://codentronix.com/wp-content/uploads/2011/04/screenshot1-300x251.jpg" alt="" width="300" height="251" /></a></p>
+<h4>Handling Input</h4>
+<p>When capturing keyboard input we must know in advance which keys we want to capture. In this tutorial we will use the LEFT and RIGHT arrow keys to move the yellow box. To handle input we hook the <strong>keydown</strong> and <strong>keyup</strong> events using JavaScript. When these events are fired they pass an event parameter that give us the key code of the pressed or released key. So, we must know the key codes of the keys we want to capture. Below I have listed some key codes. You can find more key codes by googling for "JavaScript Key Codes".</p>
+<pre>backspace 	8
+tab 	        9
+enter 	        13
+shift 	        16
+ctrl 	        17
+alt 	        18
+caps lock 	20
+escape 	        27
+page up 	33
+page down 	34
+end 	        35
+home 	        36
+left arrow 	37
+up arrow 	38
+right arrow 	39
+down arrow 	40
+</pre>
+<p>Below I show how to hook the keydown and keyup events to capture when the LEFT and RIGHT arrow keys are pressed/released.</p>
+<p>[code lang="javascript"]<br />
+  // These are flags that will tell us the state of the LEFT and RIGHT arrow keys.<br />
+  var keyLeft;<br />
+  var keyRight;</p>
+<p>  document.onkeydown = keyDown;<br />
+  document.onkeyup = keyUp;</p>
+<p>  function keyDown(e) {<br />
+    // Internet Explorer passes the event object in window.event<br />
+    if( !e ) {<br />
+      e = window.event;<br />
+    }<br />
+    if( e.keyCode == 37 ) {<br />
+      keyLeft = true;<br />
+    }<br />
+    else if( e.keyCode == 39 ) {<br />
+      keyRight = true;<br />
+    }<br />
+  }</p>
+<p>  function keyUp(e) {<br />
+    // Internet Explorer passes the event object in window.event<br />
+    if( !e ) {<br />
+      e = window.event;<br />
+    }<br />
+    if( e.keyCode == 37 ) {<br />
+      keyLeft = false;<br />
+    }<br />
+    else if( e.keyCode == 39 ) {<br />
+      keyRight = false;<br />
+    }<br />
+  }<br />
+[/code]</p>
+<p>First, we set the functions <strong>keyDown()</strong> and <strong>keyUp()</strong> to handle the <strong>keydown</strong> and <strong>keyup</strong> events. When a key is pressed the keydown event is fired and the keyDown() function is called. In the keyDown() function we check if the key is the LEFT or RIGHT arrow key and set the corresponding flag if true.</p>
+<p>When a key is released the keyup event is fired and the keyUp function is called. In the function we check if the key  is the LEFT or RIGHT arrow key and reset the corresponding flag if true.</p>
+<p>Next we modify the code from the <a title="Game Programming with JavaScript, HTML and CSS: Introduction" href="http://codentronix.com/2011/04/07/game-programming-with-javascript-html-and-css-introduction/">last tutorial</a> to add input handling. See the code below.</p>
+<p>[code lang="javascript"]<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+  &lt;title&gt;Game Programming with JavaScript, HTML and CSS: Introduction&lt;/title&gt;</p>
+<p>  &lt;style type='text/css'&gt;<br />
+    #game_region {<br />
+      width: 600px;<br />
+      height: 400px;<br />
+      background-color: black;<br />
+      position:relative;<br />
+    }</p>
+<p>    #box {<br />
+      width: 48px;<br />
+      height: 48px;<br />
+      background-color: white;<br />
+      position: absolute;<br />
+      left: 280px;<br />
+      top: 180px;<br />
+    }</p>
+<p>    #help {<br />
+      font-size: 16px;<br />
+      font-weight: bold;<br />
+      padding: 10px;<br />
+      color: green;<br />
+    }</p>
+<p>    #keyb_box {<br />
+      width: 64px;<br />
+      height: 16px;<br />
+      background-color: yellow;<br />
+      position: absolute;<br />
+      left: 200px;<br />
+      bottom: 15px;<br />
+    }<br />
+  &lt;/style&gt;</p>
+<p>  &lt;script type='text/javascript'&gt;<br />
+    var box;<br />
+    var keybBox;</p>
+<p>    var keyLeft;<br />
+    var keyRight;</p>
+<p>    // Maximum value for the box's X and Y coordinates.<br />
+    var MAX_BOX_X = 600 - 48;<br />
+    var MAX_BOX_Y = 400 - 48;<br />
+    var MAX_KEYBBOX_X = 600 - 64;</p>
+<p>    var SPEED = 5;</p>
+<p>    // Configures the init() function to be called after the document is loaded.<br />
+    window.onload = init;</p>
+<p>    function init() {<br />
+      keybBox = document.getElementById(&quot;keyb_box&quot;);<br />
+      box = document.getElementById(&quot;box&quot;);</p>
+<p>      document.onkeydown = keyDown;<br />
+      document.onkeyup = keyUp;<br />
+      keybBox.posX = keybBox.offsetLeft;<br />
+      keybBox.posY = keybBox.offsetTop;</p>
+<p>      box.posX = box.offsetLeft;<br />
+      box.posY = box.offsetTop;<br />
+      box.velX = SPEED;<br />
+      box.velY = SPEED;</p>
+<p>      setInterval(gameLoop,33);<br />
+    }</p>
+<p>    function keyDown(e) {<br />
+      // Internet Explorer passes the event object in window.event<br />
+      if( !e ) {<br />
+        e = window.event;<br />
+      }<br />
+      if( e.keyCode == 37 ) {<br />
+        keyLeft = true;<br />
+      }<br />
+      else if( e.keyCode == 39 ) {<br />
+        keyRight = true;<br />
+      }<br />
+    }</p>
+<p>    function keyUp(e) {<br />
+      // Internet Explorer passes the event object in window.event<br />
+      if( !e ) {<br />
+        e = window.event;<br />
+      }<br />
+      if( e.keyCode == 37 ) {<br />
+        keyLeft = false;<br />
+      }<br />
+      else if( e.keyCode == 39 ) {<br />
+        keyRight = false;<br />
+      }<br />
+    }</p>
+<p>    function gameLoop() {<br />
+      handleInput();<br />
+      moveBox();<br />
+    }</p>
+<p>    function handleInput() {<br />
+      if( keyLeft ) {<br />
+        keybBox.posX -= 5;<br />
+        if( keybBox.posX &lt; 0 ) {<br />
+          keybBox.posX = 0;<br />
+        }<br />
+      }<br />
+      if( keyRight ) {<br />
+          keybBox.posX += 5;<br />
+          if( keybBox.posX &gt;= MAX_KEYBBOX_X ) {<br />
+            keybBox.posX = MAX_KEYBBOX_X;<br />
+          }<br />
+      }<br />
+      keybBox.style.left = keybBox.posX + &quot;px&quot;;<br />
+    }</p>
+<p>    function moveBox() {<br />
+      box.posX += box.velX;<br />
+      box.posY += box.velY;</p>
+<p>      if( box.posX &lt;= 0 ) {<br />
+        box.posX = 0;<br />
+        box.velX = -box.velX;<br />
+      }<br />
+      if( box.posX &gt;= MAX_BOX_X ) {<br />
+        box.posX = MAX_BOX_X;<br />
+        box.velX = -box.velX;<br />
+      }<br />
+      if( box.posY &lt;= 0 ) {<br />
+        box.posY = 0;<br />
+        box.velY = -box.velY;<br />
+      }<br />
+      if( box.posY &gt;= MAX_BOX_Y ) {<br />
+        box.posY = MAX_BOX_Y;<br />
+        box.velY = -box.velY;<br />
+      }<br />
+      // Update the left and top CSS properties.<br />
+      box.style.left = box.posX +  &quot;px&quot;;<br />
+      box.style.top  = box.posY + &quot;px&quot;;<br />
+    }<br />
+  &lt;/script&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+  &lt;div id='game_region'&gt;<br />
+    &lt;div id='box'&gt;&lt;/div&gt;<br />
+    &lt;div id='keyb_box'&gt;&lt;/div&gt;<br />
+  &lt;/div&gt;<br />
+  &lt;p id='help'&gt;USE THE LEFT AND RIGHT KEY ARROWS TO MOVE THE YELLOW BOX&lt;/p&gt;<br />
+  &lt;a href='http://codentronix.com/?p=100'&gt;Click here&lt;/a&gt; to see the tutorial.<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/code]</p>
+<p><a href="http://codentronix.com/wp-content/uploads/2011/04/tut2.html" target="_blank">Click here</a> to see the code in action.</p>
+<p>We modified the <strong>init()</strong> function adding code to hook the <strong>keydown</strong> and <strong>keyup</strong> events. We also get the reference to the yellow box (defined by the keyb_box div).</p>
+<p>The game loop was modified to call the <strong>handleInput()</strong> function.  So in each frame we will check if the LEFT or RIGHT arrow key is pressed and move yellow box accordingly. The white box is moved regardless of the presence of any input.</p>
+<h4>Conclusion</h4>
+<p>To add keyboard input we hook the <strong>keydown </strong>and <strong>keyup </strong>events and declare variable flags for each key we want to capture. When a key that interests us is pressed we set the corresponding key flag in the keydown event. Likewise, when a key that interests us is released we reset the corresponding flag in the keydown event. In the game loop we use the key flags we update in the keydown and keyup events.</p>
+<h4>Exercise</h4>
+<p>Modify the code to move the yellow box up and down using the UP and DOWN arrow keys.</p>
+<p><em>If you enjoy making games like we do, then <a href="http://feeds.feedburner.com/codentronix.com">subscribe to this blog</a> and/or <a href="http://twitter.com/codentronix">follow us on twitter.</a></em></p>

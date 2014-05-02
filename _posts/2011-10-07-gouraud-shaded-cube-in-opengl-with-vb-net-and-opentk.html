@@ -1,0 +1,126 @@
+---
+layout: post
+title: Gouraud Shaded Cube in OpenGL with VB.Net and OpenTK
+categories:
+- Programming
+tags: []
+status: draft
+type: post
+published: false
+meta:
+  _edit_last: '1'
+  Hide SexyBookmarks: '0'
+  Hide OgTags: '0'
+  _syntaxhighlighter_encoded: '1'
+  iframe: <iframe width="480" height="360" src="http://www.youtube.com/embed/BXxylZMuqnU?rel=0"
+    frameborder="0" allowfullscreen></iframe>
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>A couple of months ago I decided to use OpenGL with .NET. So I needed to choose an OpenGL wrapper for .NET. After a short research I chose the <a title="OpenTK website" href="http://www.opentk.com" rel="nofollow" target="_blank">OpenTK</a> library. To try it out I developed some simple demos and I uploaded some videos of them on my <a title="My youtube page" href="http://www.youtube.com/codentronix" rel="nofollow" target="_blank">youtube page</a>.</p>
+<p>[field name="iframe"]</p>
+<p>[vbnet gutter="false"]<br />
+Option Explicit On</p>
+<p>Imports OpenTK<br />
+Imports OpenTK.Graphics<br />
+Imports OpenTK.Graphics.OpenGL</p>
+<p>Public Class GLShadedCube<br />
+    Inherits GameWindow</p>
+<p>    Protected angle As Single</p>
+<p>    Public Sub New()<br />
+        MyBase.New(320, 240, GraphicsMode.Default, &quot;First touch with OpenTK&quot;)<br />
+    End Sub</p>
+<p>    Protected Overrides Sub OnLoad(ByVal e As System.EventArgs)<br />
+        MyBase.OnLoad(e)<br />
+        GL.ClearColor(0.5, 0.5, 0.6, 0)<br />
+        GL.Enable(EnableCap.DepthTest)<br />
+    End Sub</p>
+<p>    Protected Overrides Sub OnResize(ByVal e As System.EventArgs)<br />
+        MyBase.OnResize(e)</p>
+<p>        GL.Viewport(0, 0, Me.Width, Me.Height)</p>
+<p>        Dim aspect As Single = CSng(Me.Width) / Me.Height<br />
+        Dim projMat As Matrix4 = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.1, 100.0)</p>
+<p>        GL.MatrixMode(MatrixMode.Projection)<br />
+        GL.LoadMatrix(projMat)</p>
+<p>        GL.MatrixMode(MatrixMode.Modelview)<br />
+        GL.LoadIdentity()<br />
+    End Sub</p>
+<p>    Protected Overrides Sub OnRenderFrame(ByVal e As OpenTK.FrameEventArgs)<br />
+        MyBase.OnRenderFrame(e)<br />
+        GL.Clear(ClearBufferMask.ColorBufferBit Or ClearBufferMask.DepthBufferBit)</p>
+<p>        GL.LoadIdentity()<br />
+        GL.Translate(0, 0, -5)<br />
+        GL.Rotate(angle, 0, 1, 1)<br />
+        'GL.Rotate(angle, 0, 1, 0)<br />
+        GL.Rotate(angle, 1, 0, 0)<br />
+        GL.Rotate(angle, 0, 1, 0)<br />
+        GL.Rotate(angle, 0, 0, 1)</p>
+<p>        angle += 1</p>
+<p>        GL.Begin(BeginMode.Quads)</p>
+<p>        ' Front face<br />
+        GL.Color3(1.0, 0.0, 0.0)<br />
+        GL.Vertex3(-1, 1, 1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(1, 1, 1)<br />
+        GL.Color3(0.0, 0.0, 0.7)<br />
+        GL.Vertex3(1, -1, 1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(-1, -1, 1)</p>
+<p>        ' Back face<br />
+        GL.Color3(1.0, 0.0, 0.0)<br />
+        GL.Vertex3(1, 1, -1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(-1, 1, -1)<br />
+        GL.Color3(0.0, 0.0, 0.7)<br />
+        GL.Vertex3(-1, -1, -1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(1, -1, -1)</p>
+<p>        ' Right face<br />
+        GL.Color3(1.0, 0.0, 0.0)<br />
+        GL.Vertex3(1, 1, -1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(1, 1, 1)<br />
+        GL.Color3(0.0, 0.0, 0.7)<br />
+        GL.Vertex3(1, -1, 1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(1, -1, -1)</p>
+<p>        ' Left face<br />
+        GL.Color3(1.0, 0.0, 0.0)<br />
+        GL.Vertex3(-1, 1, -1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(-1, 1, 1)<br />
+        GL.Color3(0.0, 0.0, 0.7)<br />
+        GL.Vertex3(-1, -1, 1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(-1, -1, -1)</p>
+<p>        ' Top face<br />
+        GL.Color3(1.0, 0.0, 0.0)<br />
+        GL.Vertex3(-1, 1, 1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(-1, 1, -1)<br />
+        GL.Color3(0.0, 0.0, 0.7)<br />
+        GL.Vertex3(1, 1, -1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(1, 1, 1)</p>
+<p>        ' Bottom face<br />
+        GL.Color3(1.0, 0.0, 0.0)<br />
+        GL.Vertex3(-1, -1, 1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(1, -1, 1)<br />
+        GL.Color3(0.0, 0.0, 0.7)<br />
+        GL.Vertex3(1, -1, -1)<br />
+        GL.Color3(0.0, 1.0, 0.0)<br />
+        GL.Vertex3(-1, -1, -1)</p>
+<p>        GL.End()</p>
+<p>        SwapBuffers()<br />
+    End Sub</p>
+<p>    Public Shared Sub Main()<br />
+        Dim app As New GLShadedCube<br />
+        app.Run(60, 60)<br />
+    End Sub<br />
+End Class<br />
+[/vbnet]</p>

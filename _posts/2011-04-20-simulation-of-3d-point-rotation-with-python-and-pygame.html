@@ -1,0 +1,157 @@
+---
+layout: post
+title: Simulation of 3D Point Rotation with Python and Pygame
+categories:
+- Computer Graphics
+- Pygame
+- Python
+tags:
+- 3d
+- pygame
+- python
+- simulation
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  og_video: http://www.youtube.com/v/wNoc7WX4NxA
+  views: '11327'
+  _oembed_73158a58f74b7e136e1ab1c694f2508e: <object width="640" height="505"><param
+    name="movie" value="http://www.youtube.com/v/wNoc7WX4NxA?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/wNoc7WX4NxA?version=3" type="application/x-shockwave-flash"
+    width="640" height="505" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_92ed7fa82c23d7b3affdd59d9b5e4e3f: <iframe width="640" height="480" src="http://www.youtube.com/embed/wNoc7WX4NxA?feature=oembed"
+    frameborder="0" allowfullscreen></iframe>
+  _oembed_bf8c492dff2d2ac3b55e6a6e9ceffc1f: <object width="400" height="300"><param
+    name="movie" value="http://www.youtube.com/v/wNoc7WX4NxA?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/wNoc7WX4NxA?version=3" type="application/x-shockwave-flash"
+    width="400" height="300" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _stcr@_mr.heimel@gmail.com: '2013-10-17 02:24:38|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400457237'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:16:"63.0922984416001";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"61.5153837201216";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"59.9550666057725";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"56.7706333532107";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"51.2775719098702";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"36.8314363588755";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:16:"36.7717304320761";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:16:"30.5937679193136";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"28.2674662997023";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:16:"23.2088387234009";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In this tutorial I will show you how to build a simulation of 3D point rotation using Python and Pygame. I will begin by giving you a brief background on 3d computer graphics theory. It will help you understand the code that will be presented afterwards. I assume you have a basic knowledge of Pygame. If you are new to Pygame consider reading first the article <a title="A Fast Introduction to Pygame" href="http://codentronix.com/2011/04/20/a-fast-introduction-to-pygame/">A Fast Introduction to Pygame</a>. The video below shows the simulation in action.</p>
+<p>http://www.youtube.com/watch?v=wNoc7WX4NxA</p>
+<h2>Background</h2>
+<p>To make 3D simulations, first of all, we must describe the objects in 3D space. The most common way of describing 3D objects is through the use of a 3D cartesian coordinate system. We will use the system shown in the figure below, where Y increases going up, X increases going right, and Z increases going into the screen. This is called a <em>left handed system</em>. An alternative system, is the <em>right handed system</em> where Z increases in the opposite direction.</p>
+<p><a href="http://codentronix.com/wp-content/uploads/2011/04/3d_cartesian_system.jpg"><img class="alignnone size-full wp-image-303" title="3D Cartesian System" src="http://codentronix.com/wp-content/uploads/2011/04/3d_cartesian_system.jpg" alt="Left-Handed 3D Cartesian System" width="176" height="159" /></a></p>
+<p>Next, with points defined in 3D cartesian coordinate system, we can apply transformations such as translation, rotation, and scaling. Note that unlike 2D rotations that occur in one plane, rotations in 3D space occur along an arbitrary axis. Below I present the formulas for 3D rotation along the X, Y, and Z axes.</p>
+<pre><span style="font-size: small;"><strong>Rotation along X:</strong></span>
+y' = y*cos(a) - z*sin(a)
+z' = y*sin(a) + z*cos(a)
+x' = x
+
+<span style="font-size: small;"><strong>Rotation along Y:</strong></span>
+z' = z*cos(a) - x*sin(a)
+x' = z*sin(a) + x*cos(a)
+y' = y
+
+<span style="font-size: small;"><strong>Rotation along Z:</strong></span>
+x' = x*cos(a) - y*sin(a)
+y' = x*sin(a) + y*cos(a)
+z' = z
+</pre>
+<p>When we are finished applying the transformations, we must draw the 3D object into the screen. But, since the screen is 2D we will have to convert the 3D coordinates to 2D coordinates. This operation is called <em>3D projection</em>, and there are many ways of doing it. I will cover just the common one that is the <em>perspective projection. </em>Below I present the formula.</p>
+<pre><strong><span style="font-size: medium;">3D Perspective Projection</span></strong>
+x' = x * fov / (z + viewer_distance) + half_screen_width
+y' = -y * fov / (z + viewer_distance) + half_screen_height
+z' -&gt; for now, z is useless
+</pre>
+<p>In the formula, <em>fov</em> is a constant value that defines the "field of vision". I like to use values between 128 and 256. <em>view_distance</em> is the distance from the object to the viewer.</p>
+<p>With all the points converted to 2D space, we can finally draw the object using Pygame 2D drawing functions.</p>
+<h2>The Code</h2>
+<p>I present below the code to simulate the rotation of 8 points/vertices of a cube. To start with, let's define the Point3D class to represent points in 3D space:</p>
+<p>[python]<br />
+import sys, math, pygame</p>
+<p>class Point3D:<br />
+    def __init__(self, x = 0, y = 0, z = 0):<br />
+        self.x, self.y, self.z = float(x), float(y), float(z)</p>
+<p>    def rotateX(self, angle):<br />
+        &quot;&quot;&quot; Rotates the point around the X axis by the given angle in degrees. &quot;&quot;&quot;<br />
+        rad = angle * math.pi / 180<br />
+        cosa = math.cos(rad)<br />
+        sina = math.sin(rad)<br />
+        y = self.y * cosa - self.z * sina<br />
+        z = self.y * sina + self.z * cosa<br />
+        return Point3D(self.x, y, z)</p>
+<p>    def rotateY(self, angle):<br />
+        &quot;&quot;&quot; Rotates the point around the Y axis by the given angle in degrees. &quot;&quot;&quot;<br />
+        rad = angle * math.pi / 180<br />
+        cosa = math.cos(rad)<br />
+        sina = math.sin(rad)<br />
+        z = self.z * cosa - self.x * sina<br />
+        x = self.z * sina + self.x * cosa<br />
+        return Point3D(x, self.y, z)</p>
+<p>    def rotateZ(self, angle):<br />
+        &quot;&quot;&quot; Rotates the point around the Z axis by the given angle in degrees. &quot;&quot;&quot;<br />
+        rad = angle * math.pi / 180<br />
+        cosa = math.cos(rad)<br />
+        sina = math.sin(rad)<br />
+        x = self.x * cosa - self.y * sina<br />
+        y = self.x * sina + self.y * cosa<br />
+        return Point3D(x, y, self.z)</p>
+<p>    def project(self, win_width, win_height, fov, viewer_distance):<br />
+        &quot;&quot;&quot; Transforms this 3D point to 2D using a perspective projection. &quot;&quot;&quot;<br />
+        factor = fov / (viewer_distance + self.z)<br />
+        x = self.x * factor + win_width / 2<br />
+        y = -self.y * factor + win_height / 2<br />
+        return Point3D(x, y, 1)<br />
+[/python]</p>
+<p>First,we have the constructor that initializes instances of the class. Next, we have methods to rotate a point around X, Y, and Z axes. These functions return the rotated point. Finally, we have the function that projects a point from 3D to 2D space.</p>
+<p>Next, we define the Simulation class that will do the rest of the job:</p>
+<p>[python]<br />
+class Simulation:<br />
+    def __init__(self, win_width = 640, win_height = 480):<br />
+        pygame.init()</p>
+<p>        self.screen = pygame.display.set_mode((win_width, win_height))<br />
+        pygame.display.set_caption(&quot;Simulation of 3D Point Rotation (http://codentronix.com)&quot;)</p>
+<p>        self.clock = pygame.time.Clock()</p>
+<p>        self.vertices = [<br />
+            Point3D(-1,1,-1),<br />
+            Point3D(1,1,-1),<br />
+            Point3D(1,-1,-1),<br />
+            Point3D(-1,-1,-1),<br />
+            Point3D(-1,1,1),<br />
+            Point3D(1,1,1),<br />
+            Point3D(1,-1,1),<br />
+            Point3D(-1,-1,1)<br />
+        ]</p>
+<p>        self.angleX, self.angleY, self.angleZ = 0, 0, 0</p>
+<p>    def run(self):<br />
+        while 1:<br />
+            for event in pygame.event.get():<br />
+                if event.type == pygame.QUIT:<br />
+                    sys.exit()</p>
+<p>            self.clock.tick(50)<br />
+            self.screen.fill((0,0,0))</p>
+<p>            for v in self.vertices:<br />
+                # Rotate the point around X axis, then around Y axis, and finally around Z axis.<br />
+                r = v.rotateX(self.angleX).rotateY(self.angleY).rotateZ(self.angleZ)<br />
+                # Transform the point from 3D to 2D<br />
+                p = r.project(self.screen.get_width(), self.screen.get_height(), 256, 4)<br />
+                x, y = int(p.x), int(p.y)<br />
+                self.screen.fill((255,255,255),(x,y,2,2))</p>
+<p>            self.angleX += 1<br />
+            self.angleY += 1<br />
+            self.angleZ += 1</p>
+<p>            pygame.display.flip()</p>
+<p>if __name__ == &quot;__main__&quot;:<br />
+    Simulation().run()<br />
+[/python]</p>
+<p>When this class is instantiated, it starts with initializing Pygame, and then setting up a window. Next, we create a clock object to lock the frame rate of the animation. Then, we define 8 points in 3D space. After that, we define the variables that will hold angles of rotation around each axis.</p>
+<p>The <em>run()</em> function runs the main loop where the points are rotated and drawn. First, it checks if a QUIT event is pending, and if so quits the application. Then, it locks the frame rate to 50 FPS, and after that clears the screen. Then, it traverses the vertex list, rotating each one around X, Y, and Z axes. Then, it projects the point, and draws it into the screen. After traversing the vertex list, finally, it increases the angle variables, and then updates the screen.</p>
+<p>The last line of code runs the simulation.</p>
+<p><a title="Download full source code" href="http://goo.gl/KWY9n">Click here</a> to download the full source code.</p>
+<h2>Conclusion</h2>
+<p>With a little bit of 3d computer graphics theory, we were able to make a simple 3d simulation using Pygame. In the next tutorial we will expand on the theory and code from this tutorial to make a rotating wireframe cube.</p>
+<p><em>To stay updated, make sure you <a href="http://feeds.feedburner.com/codentronix.com">subscribe to this blog</a>,  <a href="http://twitter.com/codentronix">follow us on twitter</a>, or </em><a href="http://twitter.com/codentronix"><em></em><em></em></a><em><a href="http://facebook.com/codentronix">follow us on facebook.</a></em></p>

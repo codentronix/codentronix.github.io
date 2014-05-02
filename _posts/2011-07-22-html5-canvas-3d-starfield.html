@@ -1,0 +1,140 @@
+---
+layout: post
+title: 3D Starfield in HTML5 Canvas
+categories:
+- HTML5
+- JavaScript
+- Programming
+- Web Development
+tags:
+- 3d
+- html5 demo
+- javascript
+- starfield
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  iframe: <iframe src="http://codeNtronix.com/projects/html5/3d/canvas-3d-starfield.html"
+    width="550" height="420" frameborder="0"></iframe>
+  og_description: This article will show you how to create a 3D starfield using HTML5
+    Canvas.
+  og_image: http://codentronix.com/projects/html5/html5-logo.png
+  views: '14189'
+  _stcr@_andrei.niscoveanu@gmail.com: '2012-02-13 17:38:27|Y'
+  _stcr@_shanept@iinet.net.au: '2013-06-27 14:17:29|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400444588'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"71.6078653135518";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"396";s:5:"score";s:15:"56.974663834223";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"668";s:5:"score";s:16:"49.9646841596118";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"38.3538446934416";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"558";s:5:"score";s:15:"34.165992853651";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"33.6090943265308";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:16:"30.1287402981086";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"30.1287402981086";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:15:"26.888343552247";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"23.2088387234009";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>This article will show you how to create a 3D starfield using HTML5 Canvas. Below you can see the 3D starfield in action (well, if your browser supports HTML5 canvas).</p>
+<p>[field name="iframe"]</p>
+<p>An interesting aspect of this simulation is that the stars that are far away look smaller and darker than closer stars.</p>
+<p><!--more--></p>
+<p>In this article I assume that the reader has at least a basic knowledge of HTML and JavaScript. I will begin by presenting the idea and some theory behind the simulation and after that I will present the code. If any question arises, please don't hesitate to leave a comment.</p>
+<h2>The idea</h2>
+<p>The screen is filled with a constant number of stars. In this simulation I filll the screen with 512 stars. For each star we are interested in knowing only its coordinates. Since this is a 3D simulation, the coordinates must be in 3D. So, each star will be represented in the code as an object with properties <strong>X</strong>, <strong>Y</strong>, and <strong>Z</strong>.</p>
+<p>After the page is completely loaded, we do the initial positioning of the stars, assigning them random positions, and of course ensuring that they stay within the field of view. Then we enter an infinite loop, where in each iteration (or frame) we decrease the value of the Z coordinate of each star making it move towards the user. When a star goes out of the field of view, ie, when Z is less than or equal to zero, it is repositioned deep inside the screen and is assigned random values ​​for X and Y. The final step is to draw the star, but wait, remember that the stars are in 3D. So before we draw them they should be mapped to 2D. To do the mapping to 2D we will use the following formulas:</p>
+<pre>px = 128 * star.x / + star.z + half_canvas_width
+py = 128 * star.y / + star.z + half_canvas_height</pre>
+<p>In the formula, <em>px</em> and <em>py</em> are the resulting coordinates mapped to 2D. This operation is called a <em>perspective projection.</em></p>
+<p>Having the coordinates in 2D we can immediately draw the star. However, I preferred to make the simulation a little bit more interesting by making distant stars look smaller and darker than closer stars. To achieve this, <em>linear interpolation</em> was applied to calculate the size and color of the stars based on the Z coordinate. Here are the formulas:</p>
+<pre>size = (1 - star.z / max_depth) * 5
+color = (1 - star.z / max_depth) * 255</pre>
+<p>The <em>size</em> and <em>color</em> are inversely proportional to the value of Z. Thus, when the star is at the maximum depth, <em>size</em> and <em>color</em> are both zero, approaching 5 and 255, respectively as the value of Z decreases.</p>
+<h2>Code</h2>
+<p><strong>HTML Structure</strong><br />
+Let's begin with the structure of the HTML5 page that will run the 3D starfield.</p>
+<p>[javascript gutter="false" htmlscript="true"]<br />
+&lt;!DOCTYPE html5&gt;<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+&lt;title&gt;3D Starfield in HTML5 Canvas&lt;/title&gt;<br />
+&lt;body&gt;<br />
+&lt;canvas id='tutorial' width='500' height='400'&gt;<br />
+Your browser does not support the HTML5 Canvas element.<br />
+Please update your browser.<br />
+&lt;/canvas&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/javascript]</p>
+<p>The statement in the first line tells the browser that the page is based on HTML5. Not including this statement may cause some browsers to ignore the new HTML5 elements. Internet Explorer is an example.<br />
+We have defined a canvas element inside the body element. The canvas is 500 pixels wide and 400 pixels tall, and has id <em>tutorial</em>.</p>
+<p><strong>JavaScript Code</strong><br />
+With the HTML structure defined, the next step is to enter the JavaScript code that performs the simulation. Below is the complete code. Notice that I have introduced the script inside the head element and just below the title element.</p>
+<p>[javascript gutter="false" htmlscript="true"]<br />
+&lt;!DOCTYPE html5&gt;<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+  &lt;title&gt;3D Starfield in HTML5 Canvas&lt;/title&gt;</p>
+<p>  &lt;script type='text/javascript'&gt;<br />
+    MAX_DEPTH = 32;</p>
+<p>    var canvas, ctx;<br />
+    var stars = new Array(512);</p>
+<p>    window.onload = function() {<br />
+      canvas = document.getElementById(&quot;tutorial&quot;);<br />
+      if( canvas &amp;&amp; canvas.getContext ) {<br />
+        ctx = canvas.getContext(&quot;2d&quot;);<br />
+        initStars();<br />
+        setInterval(loop,33);<br />
+       }<br />
+    }</p>
+<p>    /* Returns a random number in the range [minVal,maxVal] */<br />
+    function randomRange(minVal,maxVal) {<br />
+      return Math.floor(Math.random() * (maxVal - minVal - 1)) + minVal;<br />
+    }</p>
+<p>    function initStars() {<br />
+      for( var i = 0; i &lt; stars.length; i++ ) {<br />
+        stars[i] = {<br />
+          x: randomRange(-25,25),<br />
+          y: randomRange(-25,25),<br />
+          z: randomRange(1,MAX_DEPTH)<br />
+         }<br />
+      }<br />
+    }</p>
+<p>    function loop() {<br />
+      var halfWidth  = canvas.width / 2;<br />
+      var halfHeight = canvas.height / 2;</p>
+<p>      ctx.fillStyle = &quot;rgb(0,0,0)&quot;;<br />
+      ctx.fillRect(0,0,canvas.width,canvas.height);</p>
+<p>      for( var i = 0; i &lt; stars.length; i++ ) {<br />
+        stars[i].z -= 0.2;</p>
+<p>        if( stars[i].z &lt;= 0 ) {<br />
+          stars[i].x = randomRange(-25,25);<br />
+          stars[i].y = randomRange(-25,25);<br />
+          stars[i].z = MAX_DEPTH;<br />
+        }</p>
+<p>        var k  = 128.0 / stars[i].z;<br />
+        var px = stars[i].x * k + halfWidth;<br />
+        var py = stars[i].y * k + halfHeight;</p>
+<p>        if( px &gt;= 0 &amp;&amp; px &lt;= 500 &amp;&amp; py &gt;= 0 &amp;&amp; py &lt;= 400 ) {<br />
+          var size = (1 - stars[i].z / 32.0) * 5;<br />
+          var shade = parseInt((1 - stars[i].z / 32.0) * 255);<br />
+          ctx.fillStyle = &quot;rgb(&quot; + shade + &quot;,&quot; + shade + &quot;,&quot; + shade + &quot;)&quot;;<br />
+          ctx.fillRect(px,py,size,size);<br />
+        }<br />
+      }<br />
+    }<br />
+  &lt;/script&gt;</p>
+<p>&lt;body&gt;<br />
+  &lt;canvas id='tutorial' width='500' height='400'&gt;<br />
+    Your browser does not support HTML5 canvas.<br />
+    Please upgrade your browser.<br />
+  &lt;/canvas&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/javascript]</p>
+<p><strong>Description of code:</strong><br />
+The first line defines the <strong>MAX_DEPTH</strong> constant that stores the maximum distance or depth where a star can be. Then, the <strong>canvas</strong> variable is declared which will be used store the reference to the canvas element. The variable <strong>ctx</strong> will store the canvas context and will be used to draw inside the canvas. Obviously the <strong>stars </strong>array will store 512 stars.</p>
+<p>Next we define a function that is executed when the page is fully loaded. The function begins by getting the reference of the canvas element. After that, we determine whether the browser supports the new canvas element. If so, we get the reference of the context of the canvas that will be used to draw inside the canvas. Then, we invoke the function <strong>initStars()</strong> that prepares the stars by positioning them randomly in space. Finally, we set the <strong>loop()</strong> function to be invoked every 33 milliseconds.</p>
+<p>It is inside the <strong>loop()</strong> function where the simulation takes place. First, we clear the canvas with a black color, and then start a loop that processes the stars. In each iteration, we start by decreasing the Z value of the star. Next, we check if the star is still within the field of view. If not, the star is positioned at the maximum depth and assigned random values ​​for the coordinates X and Y. Then, we do the mapping of coordinates from 3D to 2D. Finally, we draw the star only if it is within the limits of the canvas. See the section <em>The idea</em> to understand the algorithm I use to draw the stars.</p>
+<h2>Conclusion</h2>
+<p>In this article I have shown how to make an interesting 3D starfield using the new HTML5 Canvas element. More articles on HTML5 Canvas will come. So, please <a title="Subscribe to RSS" href="http://feeds.feedburner.com/codentronix">subscribe to our feed</a> to receive updates.</p>
+<p>If you like this article, please click one of the buttons below to share the article. Consider also leaving a comment expressing what you think about this article.</p>

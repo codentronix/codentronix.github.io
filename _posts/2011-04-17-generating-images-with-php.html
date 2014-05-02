@@ -1,0 +1,160 @@
+---
+layout: post
+title: Generating Images with PHP
+categories:
+- PHP
+- Web Development
+tags:
+- GD
+- php
+- php tips
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  views: '8099'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400498904'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"558";s:5:"score";s:16:"118.877881879108";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:16:"16.9967092378001";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"5.57785028186895";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"5.57785028186895";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:16:"5.57785028186895";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"5.21320716828104";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:16:"4.40227695206471";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"4.07723909431916";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"155";s:5:"score";s:16:"4.07723909431916";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"668";s:5:"score";s:16:"3.82691280716115";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p style="text-align: justify;">PHP is often used to generate HTML pages. However, PHP is capable of generating different types of content like music, videos, pdf documents, and images. In this tutorial, you will learn how to generate images on the fly using PHP. We will create a PHP script, that every time it is invoked, it generates an image with a random number. <a title="Generating Images with PHP" href="http://codentronix.com/projects/php/tips/image.php" target="_blank">Click here</a> to see the script in action.</p>
+<p>To be able to generate images on the fly we need the GD library. So, before we get started generating images, we need to make sure this library is installed and enabled. The code below checks if the library is enabled.</p>
+<p>[php]<br />
+if( function_exists(&quot;imagecreatetruecolor&quot;) ) {<br />
+  print &quot;GD library is enabled!&quot;;<br />
+}else {<br />
+  print &quot;GD library is not enabled!&quot;;<br />
+}<br />
+[/php]</p>
+<p style="text-align: justify;">This snippet of code checks if <strong>imagecreatetruecolor()</strong>, which is one the GD's library function, is defined. If it is defined then GD is enabled, otherwise it is not enabled. Save this snippet of code in a file and run it in your browser. If the script says GD is not enabled then you must read the next section to learn how you can enable it. Otherwise, you may skip the next section.</p>
+<h2>Enabling the GD library</h2>
+<p>On Windows, you need to enable the GD extension in the php.ini configuration file. Open the configuration file and search for a line that begins with "<strong>;extension=php_gd2.dll</strong>" and uncomment it by removing the first "<strong>;</strong>" (see the screenshot below). Then, save the file and restart your web server, and you are done.</p>
+<p><a href="http://codentronix.com/wp-content/uploads/2011/04/gd_activation1.png"><img class="alignnone size-medium wp-image-221" title="Enabling GD extension on Windows" src="http://codentronix.com/wp-content/uploads/2011/04/gd_activation1-300x161.png" alt="Enabling GD extension on Windows" width="300" height="161" /></a></p>
+<p>If you are running Ubuntu, open a shell program and run the command "<em>sudo apt-get install php5-gd"</em>. After that, restart your web server and you are done.</p>
+<h2>Generating Images</h2>
+<p>To generate an image using PHP and the GD library, we follow these 3 steps:</p>
+<ol>
+<li>Create the image in memory.</li>
+<li>Paint the image.</li>
+<li>Output the image to the browser.</li>
+</ol>
+<p style="text-align: justify;">To create the image, we use the <strong>imagecreatetruecolor()</strong> function that creates a new black image. It takes as parameters the <em> </em><em> </em> width and height of the new  image. This function returns a resource identifier representing the  image. This identifier is later used in all  drawing functions that act upon the image.</p>
+<p style="text-align: justify;">After creating the image, we must allocate all the colors we need to draw into the image. For that purpose, we use <strong>imagecolorallocate()</strong>. This functions takes as parameters the image identifier,  the red, green, and blue values that represent the color we want. It returns a color identifier that represents the color.</p>
+<p style="text-align: justify;">Finally, we output the image data to the browser using <strong>imagegif()</strong>, <strong>imagepng()</strong> or <strong>imagejpeg()</strong>. These functions output, respectively, GIF, PNG, and JPEG images. Before outputing the image data, we must tell the browser about the format of our image. To do that, we send a <strong>Content-Type</strong> header specifying the format of the image. The table below shows some examples of Content-Types (also called <a href="http://en.wikipedia.org/wiki/Internet_media_type" target="_blank">Internet Media Types</a>).</p>
+<table border="0">
+<tbody>
+<tr>
+<td><strong>Content-Type</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>text/html</td>
+<td>HTML</td>
+</tr>
+<tr>
+<td>image/gif</td>
+<td>GIF image</td>
+</tr>
+<tr>
+<td>image/jpeg</td>
+<td>JPEG image</td>
+</tr>
+<tr>
+<td>image/png</td>
+<td>PNG image</td>
+</tr>
+<tr>
+<td>application/pdf</td>
+<td>PDF document</td>
+</tr>
+<tr>
+<td>audio/mp4</td>
+<td>MP4 audio</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: justify;">By default, PHP sets the Content-Type header to <strong>text/html</strong>. Thus, to output a JPEG image, we must set Content-Type header to <strong>image/jpeg</strong>. To change headers we use the built-in <strong>header()</strong> function.</p>
+<p style="text-align: justify;">Let's create a small script that generates a 400x200 JPEG black image with a yellow rectangle inside.</p>
+<p>[php]<br />
+// Create the image.<br />
+$im = imagecreatecolor(400,200);</p>
+<p>// Allocate yellow color<br />
+$white  = imagecolorallocate($im,255,255,255);</p>
+<p>// Draw a filled yellow rectangle<br />
+imagefilledrectangle($im,10,10,50,50,$yellow);</p>
+<p>// Tell the browser we will output a JPEG image.<br />
+header(&quot;Content-Type: image/jpeg&quot;);</p>
+<p>// Output the image data in JPEG format<br />
+imagejpeg($im);<br />
+[/php]</p>
+<p>First of all, we create the image and save the returned identifier in <strong>$im</strong>. Next, we allocate a yellow color and save the returned identifier in <strong>$yellow</strong>. After that, we draw a yellow filled rectangle into our image. We use <strong><em>$im</em></strong> to reference our image, and <strong>$yellow</strong> to reference the yellow color we allocated. Then, we tell the browser we will output a JPEG image, by sending a <strong>Content-Type header</strong> set to <strong>image/jpeg</strong>. Finally, we output our image in JPEG format. As you can see, this is pretty simple.</p>
+<p>In the table below, I summarize some of the drawing functions you can use to draw into an image. You can find the complete list of the GD library's functions in <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">this page</a> from the PHP website.</p>
+<table border="0">
+<tbody>
+<tr>
+<td><strong>Function</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>imagefilledrectangle($image,$x1,$y1,$x2,$y2,$color)</td>
+<td>Draws a filled rectangle that starts at point 1 ($x1,$y1) and ends at ($x2,$y2)</td>
+</tr>
+<tr>
+<td>imageline($image,$x1,$y1,$x2,$y2,$color)</td>
+<td>Draws a line from point 1 ($x1,$y1) to point 2 ($x2,$y2)</td>
+</tr>
+<tr>
+<td>imagesetpixel($image,$x,$y,$color)</td>
+<td>Draws a single pixel at the specified coordinate</td>
+</tr>
+<tr>
+<td>imagestring($image,$font,$x1,$y1,$string,$color)</td>
+<td>Draws a string horizontally at the specified coordinate. $font can be a number between 1 and 5. The higher the number the larger is the font.</td>
+</tr>
+</tbody>
+</table>
+<p>Now we have enough knowledge to create a script to generate an image with a random number.</p>
+<p>[php]<br />
+// Create the image<br />
+$im = imagecreatetruecolor(400,200);</p>
+<p>// Allocate a red color.<br />
+$red = imagecolorallocate($im,255,0,0);</p>
+<p>// Allocate a blue color.<br />
+$yellow = imagecolorallocate($im,255,255,0);</p>
+<p>// Draw a yellow line from the upper left corner to the lower right corner.<br />
+imageline($im,0,0,100,50,$yellow);</p>
+<p>// Draw a yellow line from the lower left corner to the upper right corner.<br />
+imageline($im,0,50,100,0,$yellow);</p>
+<p>// Generate a random 4-digit number.<br />
+$rnd_num = rand(1111,9999);</p>
+<p>// Draw the random number with a red color.<br />
+imagestring($im,5,50,10,$rnd_num,$red);</p>
+<p>// Tell the browser we will output a PNG image<br />
+header(&quot;Content-Type: image/png&quot;);</p>
+<p>// Output the image to the browser in PNG format<br />
+imagepng($im);<br />
+[/php]</p>
+<p>First, we create the image. After that, we allocate red and yellow colors. Then, we draw 2 yellow lines. Next, we generate a random 4 digit number. After that, we draw the random number into the image using the largest built-in font and a red color. Finally, we tell the browser we will output a PNG image, and then we send the image data.</p>
+<p>Save the above script in a file named <em>image.php.</em> Running this script in the browser will generate a black image with 2 lines underneath a random 4 digit number.</p>
+<p><a href="http://codentronix.com/projects/php/tips/image.php" target="_blank">Click here</a> to see the script in action.</p>
+<p>We can use the image.php script as the source for <strong>img </strong>HTML elements tags. Check the code below:</p>
+<p>[code lang="html"]<br />
+&lt;html&gt;<br />
+&lt;head&gt;&lt;title&gt;Generating Images with PHP: Example&lt;/title&gt;&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&lt;h1&gt;PHP Tips: Generating Images with PHP&lt;/h1&gt;<br />
+Refresh the page to change the image.<br />
+&lt;img src=&quot;image.php&quot; alt=&quot;&quot; /&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/code]</p>
+<p><a href="http://codentronix.com/projects/php/tips/image.html" target="_blank">Click here</a> to see the html code above in action. The full source code is <a title="Download the full source code" href="http://goo.gl/TxtXn">here</a>.</p>
+<h2>Conclusion</h2>
+<p>The GD library provides various functions for image processing. To generate an image, first, we create an in-memory representation of the image using <strong>imagecreatetruecolor()</strong>. After that, we can draw into the in-memory image using various GD's function. Before, submitting the image data to the browser, we set an appropriate Content-Type header for the image format. Finally, we submit the image data to the browser.</p>

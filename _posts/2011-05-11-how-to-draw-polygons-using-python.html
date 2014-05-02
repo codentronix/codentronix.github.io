@@ -1,0 +1,49 @@
+---
+layout: post
+title: How to Draw Polygons using Python
+categories:
+- Pygame
+tags:
+- pygame
+status: draft
+type: post
+published: false
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In this tutorial I will show you how easy it is to draw polygons using Python. We will do this using the Pygame library. At the end of the article I will present a complete program that draws some polygons.</p>
+<p>I assume you have at least a basic understanding of Python. If you have  never used the Pygame library, please consider reading the tutorial <a title="A Fast Introduction to Pygame" href="../2011/04/20/a-fast-introduction-to-pygame/" target="_blank">A Fast Introduction to Pygame</a>.</p>
+<p>So, let's go...</p>
+<p>To draw polygons we use the <em>polygon()</em> function from the Draw module. See the signature of the function below.</p>
+<pre>pygame.draw.polygon(Surface, color, pointlist, width=0)
+</pre>
+<p>The first parameter specifies the surface where the polygon will be drawn into. The <em>color</em> parameter specifies the color that will be used to fill the polygon. The <em>pointlist</em> parameter specifies the list of vertices of the polygon. The polygon vertices are represented as (X,Y) tuples. If <em>width </em>is zero the polygon is filled, otherwise only its edges are drawn.</p>
+<p>Let us see some examples of the usage of the function below:</p>
+<p>&nbsp;</p>
+<p>[python]<br />
+import pygame, sys</p>
+<p>RED = (255,0,0)<br />
+GREEN = (0,255,0)</p>
+<p>pygame.init()<br />
+screen = pygame.display.set_mode((640,480))</p>
+<p>while True:<br />
+  for event in pygame.event.get():<br />
+    if event.type == pygame.QUIT:<br />
+      pygame.quit()<br />
+      sys.exit()</p>
+<p>  # Clear the window surface<br />
+  screen.fill((0,0,0))</p>
+<p>  # Draw a red triangle<br />
+  pygame.draw.polygon(screen, RED, [(100,10),(10,50),(190,50)])</p>
+<p>  # Draw a rectangle<br />
+  pygame.draw.polygon(screen,GREEN,[(200,40),(300,40),(300,100),(200,100)])</p>
+<p>  # Display the polygons in the window.<br />
+  pygame.display.flip()<br />
+[/python]</p>

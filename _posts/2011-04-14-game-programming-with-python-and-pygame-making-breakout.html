@@ -1,0 +1,265 @@
+---
+layout: post
+title: Game Programming with Python and PyGame - Making Breakout
+categories:
+- Game Programming
+- Pygame
+- Python
+tags:
+- breakout
+- game programming
+- pygame
+- python
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  views: '26118'
+  og_video: http://www.youtube.com/v/x8RfvDgshws
+  og_image: http://codentronix.com/projects/python/pygame/bricka-screenshot.png
+  _oembed_f3c20b21812c8e235d37eb0232fdf438: <object width="640" height="505"><param
+    name="movie" value="http://www.youtube.com/v/x8RfvDgshws?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/x8RfvDgshws?version=3" type="application/x-shockwave-flash"
+    width="640" height="505" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_4a96c22333948cf5ed29a70758c2aa85: <iframe width="640" height="480" src="http://www.youtube.com/embed/x8RfvDgshws?feature=oembed"
+    frameborder="0" allowfullscreen></iframe>
+  _oembed_4a46cf2dba61a885d68dd1b264933311: <object width="400" height="300"><param
+    name="movie" value="http://www.youtube.com/v/x8RfvDgshws?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/x8RfvDgshws?version=3" type="application/x-shockwave-flash"
+    width="400" height="300" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _stcr@_abhishekr.173@gmail.com: '2011-11-02 20:39:24|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400441020'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"59.9094647110906";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"46.7634730323671";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:15:"43.127838092772";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"39.5443191543159";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"36.7717304320761";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:16:"36.7717304320761";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"36.7717304320761";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"30.8732038823774";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:15:"30.062273666161";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"155";s:5:"score";s:15:"26.140165834831";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>Python and Pygame are simple yet powerful tools that make up a great combination for rapid game development. This tutorial will guide you step by step in using these two tools to make the classic Breakout game.</p>
+<p>See below a video of the game in action.</p>
+<p>http://www.youtube.com/watch?v=x8RfvDgshws</p>
+<p><a title="Game Programming with Python and Pygame - Breakout game source code" href="http://goo.gl/MSfvl">Click here</a> to download the full source code.</p>
+<p>What you will need:</p>
+<ul>
+<li>Python (<a href="http://python.org/" target="_blank">http://www.python.org</a>)</li>
+<li>Pygame library (<a href="http://pygame.org/" target="_blank">http://www.pygame.org</a>)</li>
+</ul>
+<p><strong>NOTE:</strong> If you don't have Python and/or Pygame installed, please check the tutorial <a title="How to Install Python and Pygame" href="http://codentronix.com/2011/04/12/how-to-install-python-and-pygame/">How to Install Python and Pygame</a>.</p>
+<h2>The ideia</h2>
+<p>In the game, there are rows of bricks in the top of the screen. The objective of the game is to destroy all the bricks with a small ball that travels across the screen. A brick is destroyed when hit by the ball. The ball bounces off when hits the screen borders, the bricks and the paddle. The player must avoid the ball to touch the bottom of the screen (or in common words, falling to the ground). To prevent this from happening, the player uses the paddle to bounce the ball upward, keeping it in play.</p>
+<p>Your score increases when you destroy bricks. On the other hand, you lose one life each time the ball falls in the ground.</p>
+<h3>Game states</h3>
+<p>The game has 4 states:</p>
+<ol>
+<li><em>Ball in paddle</em> - we get in this state when the game starts or when we lose the ball.</li>
+<li><em>Playing</em> - we get in this state when we press SPACE to launch the ball.</li>
+<li><em>Game over</em> - when we lose all of our lives we get in this state.</li>
+<li><em>Won</em> - we get in this state when we destroy all the bricks.</li>
+</ol>
+<p>This is the sequence of events. The game begins in the state "ball in paddle". In this state, the ball is glued to the paddle. We can move the paddle, and when we do so, the ball follows the paddle, because it is glued to the paddle. Then, when we press SPACE the game goes into "Playing" state. In this state the ball travels across the screen bouncing off the screen borders, bricks and the paddle. Each time the ball hits a brick we increase the score. On the other hand, if we lose the ball, we decrease the life count and if it is greater than zero we enter the "ball in paddle state". Otherwise, we enter the "game over" state.</p>
+<p>While in the "playing" state, if we destroy all the bricks, we enter the "won" state. We transit from the "game over" and "won" states to "ball in paddle" state by pressing the ENTER key. Actually, this means playing again.</p>
+<h3>Paddle movement</h3>
+<p>We move the paddle using the LEFT and RIGHT arrow keys. When moving the paddle we make sure it stays inside the screen.</p>
+<h3>Ball movement</h3>
+<p>The ball moves in 4 directions: up-right, up-left, down-right, down-left. To simulate this we use a velocity vector. Wait, don't be afraid of this expression. It just means we use separate values to update the position of the ball. For example, to simulate the  up-right movement we use velX = 5, velY = -5 (the velY is negative to make the ball go up). Below I show more examples of velocity vector values.</p>
+<p>[code]<br />
+[X,Y]<br />
+[5,-5] --&gt; up-right direction<br />
+[-5,-5] --&gt; up-left direction<br />
+[-5,5] --&gt; down-right direction<br />
+[-5,-5] --&gt; down-left direction<br />
+[/code]</p>
+<p>We make sure the ball is inside the screen. When it hits the left and right borders we invert the X velocity component. So, if it was going to the left it will end up going to the right and vice versa. On the other hand, if the ball hits the paddle, top or bottom borders or one brick, we invert the Y velocity component. So, if the ball was going up it ends up going down and vice versa.</p>
+<h3>Collision Detection</h3>
+<p>Collision detection is a technique used to know if two objects collide or not. Basically, two objects collide if they overlap. We employ collision detection to determine if the ball collides with the bricks and the paddle.</p>
+<h2>The Code</h2>
+<p>[code lang="python"]<br />
+import pygame</p>
+<p>SCREEN_SIZE   = 640,480</p>
+<p># Object dimensions<br />
+BRICK_WIDTH   = 60<br />
+BRICK_HEIGHT  = 15<br />
+PADDLE_WIDTH  = 60<br />
+PADDLE_HEIGHT = 12<br />
+BALL_DIAMETER = 16<br />
+BALL_RADIUS   = BALL_DIAMETER / 2</p>
+<p>MAX_PADDLE_X = SCREEN_SIZE[0] - PADDLE_WIDTH<br />
+MAX_BALL_X   = SCREEN_SIZE[0] - BALL_DIAMETER<br />
+MAX_BALL_Y   = SCREEN_SIZE[1] - BALL_DIAMETER</p>
+<p># Paddle Y coordinate<br />
+PADDLE_Y = SCREEN_SIZE[1] - PADDLE_HEIGHT - 10</p>
+<p># Color constants<br />
+BLACK = (0,0,0)<br />
+WHITE = (255,255,255)<br />
+BLUE  = (0,0,255)<br />
+BRICK_COLOR = (200,200,0)</p>
+<p># State constants<br />
+STATE_BALL_IN_PADDLE = 0<br />
+STATE_PLAYING = 1<br />
+STATE_WON = 2<br />
+STATE_GAME_OVER = 3<br />
+[/code]</p>
+<p>We begin by importing the pygame module.  Next we define some constants. The first constant defines the screen dimensions. Then, we have constants that define the dimensions of the paddle, ball and bricks. After that, we define constants that specify the maximum X coordinate for the ball and paddle.  These constants will be used later to enforce the paddle and ball stay inside the screen. Finally, we define color and state constants.</p>
+<p>[code lang="python"]<br />
+class Bricka:</p>
+<p>    def __init__(self):<br />
+        pygame.init()</p>
+<p>        self.screen = pygame.display.set_mode(SCREEN_SIZE)<br />
+        pygame.display.set_caption(&quot;bricka (a breakout clone by codeNtronix.com)&quot;)</p>
+<p>        self.clock = pygame.time.Clock()</p>
+<p>        if pygame.font:<br />
+            self.font = pygame.font.Font(None,30)<br />
+        else:<br />
+            self.font = None</p>
+<p>        self.init_game()<br />
+[/code]</p>
+<p>We have encapsulated the game code inside the Bricka class. In the constructor, firstly, we initialize the pygame modules. Next, we create the game window and we set a title for it. Next we create a clock object that will be used later to lock our frame rate to a constant value. Next, we create a font object, only if the font module is available.  This object will be used later to draw text in the screen. Finally, we call the <em>init_game()</em> function. This function is described below.</p>
+<p>[code lang="python"]<br />
+    def init_game(self):<br />
+        self.lives = 3<br />
+        self.score = 0<br />
+        self.state = STATE_BALL_IN_PADDLE</p>
+<p>        self.paddle = pygame.Rect(300,PADDLE_Y,PADDLE_WIDTH,PADDLE_HEIGHT)<br />
+        self.ball = pygame.Rect(300,PADDLE_Y - BALL_DIAMETER,BALL_DIAMETER,BALL_DIAMETER)</p>
+<p>        self.ball_vel = [5,-5]</p>
+<p>        self.create_bricks()</p>
+<p>    def create_bricks(self):<br />
+        y_ofs = 35<br />
+        self.bricks = []<br />
+        for i in range(7):<br />
+            x_ofs = 35<br />
+            for j in range(8):<br />
+                self.bricks.append(pygame.Rect(x_ofs,y_ofs,BRICK_WIDTH,BRICK_HEIGHT))<br />
+                x_ofs += BRICK_WIDTH + 10<br />
+            y_ofs += BRICK_HEIGHT + 5<br />
+[/code]</p>
+<p>In the <em>init_game()</em> function we reset some variables. We start with 3 lives, score 0, and state set to STATE_BALL_IN_PADDLE. Next we define the rectangles for the paddle and ball. We will, later, use these rectangles for movement, drawing, and for collision detection. Then, we initialize the ball velocity, setting it to go up-right. Finally, we call the <em>create_bricks()</em> function that will create the bricks. The bricks are maintained in a list.</p>
+<p>[code lang="python"]<br />
+    def check_input(self):<br />
+        keys = pygame.key.get_pressed()</p>
+<p>        if keys[pygame.K_LEFT]:<br />
+            self.paddle.left -= 5<br />
+            if self.paddle.left &lt; 0:<br />
+                self.paddle.left = 0</p>
+<p>        if keys[pygame.K_RIGHT]:<br />
+            self.paddle.left += 5<br />
+            if self.paddle.left &gt; MAX_PADDLE_X:<br />
+                self.paddle.left = MAX_PADDLE_X</p>
+<p>        if keys[pygame.K_SPACE] and self.state == STATE_BALL_IN_PADDLE:<br />
+            self.ball_vel = [5,-5]<br />
+            self.state = STATE_PLAYING<br />
+        elif keys[pygame.K_RETURN] and (self.state == STATE_GAME_OVER or self.state == STATE_WON):<br />
+            self.init_game()<br />
+[/code]</p>
+<p>The <em>check_input()</em> function handles keyboard input. Firstly, we get a list with the states of all keys. After that, if the LEFT arrow key is pressed we move the paddle left. Likewise, if the RIGHT arrow key is pressed we move the paddle right. During the movement, we make sure the paddle stays inside the screen. Then, if the SPACE key is pressed while we are in state <em>Ball in Paddle</em>, we change the velocity to make it go up-right and change the state to <em>Playing</em>. This causes the ball to be launched. Finally, if the ENTER key is pressed while in the <em>game over </em>or <em>won </em>states, we call init_game() to restart the game.</p>
+<p>[code lang="python"]<br />
+    def move_ball(self):<br />
+        self.ball.left += self.ball_vel[0]<br />
+        self.ball.top  += self.ball_vel[1]</p>
+<p>        if self.ball.left &lt;= 0:<br />
+            self.ball.left = 0<br />
+            self.ball_vel[0] = -self.ball_vel[0]<br />
+        elif self.ball.left &gt;= MAX_BALL_X:<br />
+            self.ball.left = MAX_BALL_X<br />
+            self.ball_vel[0] = -self.ball_vel[0]</p>
+<p>        if self.ball.top &lt; 0:<br />
+            self.ball.top = 0<br />
+            self.ball_vel[1] = -self.ball_vel[1]</p>
+<p>    def handle_collisions(self):<br />
+        for brick in self.bricks:<br />
+            if self.ball.colliderect(brick):<br />
+                self.score += 3<br />
+                self.ball_vel[1] = -self.ball_vel[1]<br />
+                self.bricks.remove(brick)<br />
+                break</p>
+<p>        if len(self.bricks) == 0:<br />
+            self.state = STATE_WON</p>
+<p>        if self.ball.colliderect(self.paddle):<br />
+            self.ball.top = PADDLE_Y - BALL_DIAMETER<br />
+            self.ball_vel[1] = -self.ball_vel[1]<br />
+        elif self.ball.top &gt; self.paddle.top:<br />
+            self.lives -= 1<br />
+            if self.lives &gt; 0:<br />
+                self.state = STATE_BALL_IN_PADDLE<br />
+            else:<br />
+                self.state = STATE_GAME_OVER<br />
+[/code]</p>
+<p>The <em>move_ball()</em> functions takes care of moving the ball. First, it updates the position coordinates adding the velocity components. After that, it checks if the ball hit the left or right screen border. If true, the X velocity component is inverted making it bounce. Finally, it checks if the ball hit the top border, inverting the Y velocity component, if true.</p>
+<p>[code lang="python"]<br />
+    def handle_collisions(self):<br />
+        for brick in self.bricks:<br />
+            if self.ball.colliderect(brick):<br />
+                self.score += 3<br />
+                self.ball_vel[1] = -self.ball_vel[1]<br />
+                self.bricks.remove(brick)<br />
+                break</p>
+<p>        if len(self.bricks) == 0:<br />
+            self.state = STATE_WON</p>
+<p>        if self.ball.colliderect(self.paddle):<br />
+            self.ball.top = PADDLE_Y - BALL_DIAMETER<br />
+            self.ball_vel[1] = -self.ball_vel[1]<br />
+        elif self.ball.top &gt; self.paddle.top:<br />
+            self.lives -= 1<br />
+            if self.lives &gt; 0:<br />
+                self.state = STATE_BALL_IN_PADDLE<br />
+            else:<br />
+                self.state = STATE_GAME_OVER<br />
+[/code]</p>
+<p>The <em>handle_collisions()</em> function determines if the ball collided with a brick, the paddle, or has fallen to the ground. First, it checks if the ball has collided with a brick. If true, it increments the score by 3 units and removes the brick from the brick list. After making the brick collision test, it checks if there are remaining bricks. If not, it changes the state to <em>Won</em>. Finally, it checks if the ball hit the paddle. If true, the ball is repositioned so that is right above the paddle and the Y velocity component is inverted.  Otherwise, it checks if the ball is below the paddle (going to the ground), and if true, decreases the life count. If the count drops to zero, it changes the state to <em>Ball in paddle.</em> Otherwise, changes the state to <em>Ball in paddle.</em></p>
+<p>[code lang="python"]<br />
+    def show_stats(self):<br />
+        if self.font:<br />
+            font_surface = self.font.render(&quot;SCORE: &quot; + str(self.score) + &quot; LIVES: &quot; + str(self.lives), False, WHITE)<br />
+            self.screen.blit(font_surface, (205,5))</p>
+<p>    def show_message(self,message):<br />
+        if self.font:<br />
+            size = self.font.size(message)<br />
+            font_surface = self.font.render(message,False, WHITE)<br />
+            x = (SCREEN_SIZE[0] - size[0]) / 2<br />
+            y = (SCREEN_SIZE[1] - size[1]) / 2<br />
+            self.screen.blit(font_surface, (x,y))<br />
+[/code]</p>
+<p>These 2 functions draw texts in the screen. The <em>show_stats() </em>shows score and life info while show_message() is used to show game state related messages.</p>
+<p>[code lang="python"]<br />
+    def run(self):<br />
+        while 1:<br />
+            for event in pygame.event.get():<br />
+                if event.type == pygame.QUIT:<br />
+                    sys.exit</p>
+<p>            self.clock.tick(50)<br />
+            self.screen.fill(BLACK)<br />
+            self.check_input()</p>
+<p>            if self.state == STATE_PLAYING:<br />
+                self.move_ball()<br />
+                self.handle_collisions()<br />
+            elif self.state == STATE_BALL_IN_PADDLE:<br />
+                self.ball.left = self.paddle.left + self.paddle.width / 2<br />
+                self.ball.top  = self.paddle.top - self.ball.height<br />
+                self.show_message(&quot;PRESS SPACE TO LAUNCH THE BALL&quot;)<br />
+            elif self.state == STATE_GAME_OVER:<br />
+                self.show_message(&quot;GAME OVER. PRESS ENTER TO PLAY AGAIN&quot;)<br />
+            elif self.state == STATE_WON:<br />
+                self.show_message(&quot;YOU WON! PRESS ENTER TO PLAY AGAIN&quot;)</p>
+<p>            self.draw_bricks()</p>
+<p>            # Draw paddle<br />
+            pygame.draw.rect(self.screen, BLUE, self.paddle)</p>
+<p>            # Draw ball<br />
+            pygame.draw.circle(self.screen, WHITE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)</p>
+<p>            self.show_stats()</p>
+<p>            pygame.display.flip()<br />
+[/code]</p>
+<p>This is the game loop. First, we handle the window events. If a request to quit the application exists, we do quit the application. After handling the events, we use the clock object to lock the frame rate to 50 FPS. Then, we handle keyboard input. After that, the next action depends on the game state. If we are in <em>Playing </em>state, we move the ball calling <em>move_ball()</em>, and handle collisions calling <em>handle_collisions()</em>. Otherwise, we print a message with instructions. In state <em>Ball in paddle</em> we ensure the ball is glued to the paddle. After that, we draw the paddle, the ball, and display the score and lives text. Finally, we call <em>pygame.display.flip()</em> to display everything that has been drawn in the frame.</p>
+<p>[code lang="python"]<br />
+if __name__ == &quot;__main__&quot;:<br />
+    Bricka().run()<br />
+[/code]</p>
+<p>Finally, this piece of code creates an instance of the game class and runs it. It makes sure the file is run directly and not imported from a module.</p>
+<h2>Conclusion</h2>
+<p>As you can see, game programming with Python and Pygame is pretty easy and fun. We have assembled a game in a few lines of code. <a title="Game Programming with Python and Pygame - Breakout game source code" href="http://goo.gl/MSfvl">Click here</a> to download the full source code.</p>
+<p><em>If you enjoy making games like we do, then <a href="http://feeds.feedburner.com/codentronix.com">subscribe to this blog</a> and/or <a href="http://twitter.com/codentronix">follow us on twitter.</a></em></p>

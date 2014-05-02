@@ -1,0 +1,74 @@
+---
+layout: post
+title: ! '3D Cube in HTML5 Canvas: Part 1'
+categories:
+- Programming
+tags: []
+status: draft
+type: post
+published: false
+meta:
+  _edit_last: '1'
+  iframe: <iframe src="http://codeNtronix.com/projects/html5/3d/canvas-3d-cube-part1.html"
+    width="450" height="250" frameborder="0"></iframe>
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>This is the first article in a series of articles that aim to show how to make an animated textured cube in HTML5 Canvas using JavaScript. We will not use WebGL, but instead we will use the 2D context of canvas. The series will be divided in 5 parts:</p>
+<ul>
+<li>Part 1 - Representation of Points.</li>
+<li>Part 2 - Wireframe Cube</li>
+<li>Part 3 - Solid Cube</li>
+<li>Part 4 - Light Effect</li>
+<li>Part 5 - Textured Cube</li>
+</ul>
+<div>The main objective of the series is to teach how to draw an animated textured cube (Part 5). But, before we get there we will see some theory alongside.</div>
+<div>In this first article we will learn how to represent points and how to apply transformations like rotations and translations. In the end we will be able to make a simulation like the one below.</div>
+<div>[field name="iframe"]</div>
+<h2>Introduction</h2>
+<p>In the 2D context of a HTML5 canvas we can draw directly only 2D graphics. However, if we apply some theory from 3D computer graphics we can draw 3D graphics inside of a 2D canvas. In this series we will put in practice some theory that will allow us to draw an animated textured cube inside a 2D canvas.</p>
+<p>We want to draw a cube, which is a 3D object, on a screen which is a 2D surface . Unfortunately, we can't do this directly. To draw a 3D object on a 2D screen we need to follow these steps.  Firstly, we describe the object in 3D space. Once in 3D space, the object can be applied transformations like rotations, translations and scaling. Finally, the object must be converted from 3D to 2D through an operation called <strong>projection</strong>.</p>
+<p>Summarizing these are the steps to draw a 3D object:</p>
+<p>a) Describe the object in 3D space.<br />
+b) Apply transformations: eg. translations, rotations, scaling (these are the common).<br />
+c) Map the object from 3D to 2D through a projection transformation.</p>
+<p>In the next sections we will examine each of these steps.</p>
+<h3>Representing objects in 3D</h3>
+<p>3D objects are composed by faces which in turn are composed by vertices. For example, a cube is composed by 6 faces and 8 vertices. So, to draw a cube we need information about its faces and vertices.</p>
+<p>In this article we will focus only on how to represent points. The representation of faces will be left to Part 2.</p>
+<p>To represent points in 3D, a 3D Cartesian system is often used. In this series we will use the Cartesian system presented below. Notice that X increases to the right, Y increses up, and Z goes into the screen. This is a <em>left-handed coordinated system</em>. An alternative system would be a <em>right-handed coordinate system </em>with Z going out of the screen.</p>
+<p>[caption id="" align="alignnone" width="176" caption="3D Cartesian System"]<img title="3D Cartesian System" src="http://codentronix.com/projects/html5/3d/3d_cartesian_system.jpg" alt="3D Cartesian System" width="176" height="159" />[/caption]</p>
+<p>To represent a point we need information about its 3 coordinates X, Y and Z. When defining a 3D object we need to define all of its vertices. So, in a cube we need to define its 8 vertices.</p>
+<p>After an object is represented in 3D, we can apply transformations such as rotations, translations and scaling. These transformations are applied to each of the points of the object.</p>
+<h3>Transformations</h3>
+<p>Points in 3D can be transformed with transformations such as <strong>translations</strong>, <strong>rotations</strong>, and <strong>scaling</strong>. The meaning of the rotations is the same as in 2D, except for the rotations. The rotations in 2D occur around a point while in 3D they occur around an arbitrary axis. Often points are rotated around X, Y or Z axes.</p>
+<p>Below I present the formulas of translation, rotation, and scaling. In the formulas (x,y,z)  are the coordinates of the point to be transformed, and (x',y',z') are the coordinates of the resulting transformed point.</p>
+<p>NOTE: It is out of scope of this tutorial to show the deduction of these formulas.</p>
+<p><strong>Scaling</strong></p>
+<pre>x' = x * k
+y' = y * k
+z' = z * k</pre>
+<p><strong>Translation</strong></p>
+<pre>x' = x + tx
+y' = y + ty
+z' = z + tz</pre>
+<p><strong>Rotation</strong></p>
+<pre>Rotação no eixo X
+y' = y*cos(a) - z*sin(a)
+z' = y*sin(a) + z*cos(a)
+x' = x
+
+Rotação no eixo Y:
+z' = z*cos(a) - x*sin(a)
+x' = z*sin(a) + x*cos(a)
+y' = y
+
+Rotação no eixo Z:
+x' = x*cos(a) - y*sin(a)
+y' = x*sin(a) + y*cos(a)
+z' = z</pre>
+<p>a</p>

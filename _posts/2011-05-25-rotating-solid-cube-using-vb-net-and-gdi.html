@@ -1,0 +1,253 @@
+---
+layout: post
+title: Rotating Solid Cube Using VB.NET and GDI+
+categories:
+- .NET
+- Computer Graphics
+- VB.NET
+tags:
+- 3d
+- GDI+
+- simulation
+- vb.net
+- visual basic
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  og_video: http://www.youtube.com/v/P_vyg7rDE5A
+  views: '17954'
+  _oembed_554351ad3d548ec3d0a11ff90c0d8c7a: <object width="640" height="505"><param
+    name="movie" value="http://www.youtube.com/v/P_vyg7rDE5A?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/P_vyg7rDE5A?version=3" type="application/x-shockwave-flash"
+    width="640" height="505" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_ac41ef67045bc11f7a7028b3a9d6adff: <object width="400" height="300"><param
+    name="movie" value="http://www.youtube.com/v/P_vyg7rDE5A?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/P_vyg7rDE5A?version=3" type="application/x-shockwave-flash"
+    width="400" height="300" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_322df2745f85398e1ba41ae2f57d1c12: <iframe width="640" height="480" src="http://www.youtube.com/embed/P_vyg7rDE5A?feature=oembed"
+    frameborder="0" allowfullscreen></iframe>
+  _wp_rp_related_posts_query_result_cache_expiration: '1400452786'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"125.006669577879";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"635";s:5:"score";s:16:"42.9821621241378";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"30.5937679193136";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"27.8211791970738";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:16:"27.8211791970738";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"25.6239546197376";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"23.7144121148532";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"17.7419724169991";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"17.7419724169991";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"579";s:5:"score";s:15:"17.246244656987";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In my last tutorial I have shown how to make a <a title="Rotating Wireframe Cube using VB.NET and GDI+" href="http://codentronix.com/2011/05/24/rotating-wireframe-cube-using-vb-net-and-gdi/">wireframe cube using VB.NET and GDI+</a>. Today, we will build from the code from the last tutorial in order to make a rotating solid cube. The video below shows what we will achieve after finishing the tutorial.</p>
+<p>http://www.youtube.com/watch?v=P_vyg7rDE5A</p>
+<p>THE FULL SOURCE CODE IS <a title="Link to the Full Source Code" href="http://goo.gl/cyplT">HERE</a>.</p>
+<h2>The Code</h2>
+<p>The original code was divided in 2 files [<strong>Point3D.vb</strong> and <strong>Main.vb</strong>]. The Point3D.vb file  defined the Point3D class which represents points in 3D space. The file Main.vb defined the Window form where the simulation runs.</p>
+<p>The class Point3D remains unchanged and is presented below.</p>
+<p>[vbnet]<br />
+'<br />
+' Defines the Point3D class that represents points in 3D space.<br />
+' Developed by leonelmachava &lt;leonelmachava@gmail.com&gt;<br />
+' http://codentronix.com<br />
+'<br />
+' Copyright (c) 2011 Leonel Machava<br />
+'<br />
+Option Explicit On</p>
+<p>Public Class Point3D<br />
+    Protected m_x As Double, m_y As Double, m_z As Double</p>
+<p>    Public Sub New(ByVal x As Double, ByVal y As Double, ByVal z As Double)<br />
+        Me.X = x<br />
+        Me.Y = y<br />
+        Me.Z = z<br />
+    End Sub</p>
+<p>    Public Property X() As Double<br />
+        Get<br />
+            Return m_x<br />
+        End Get<br />
+        Set(ByVal value As Double)<br />
+            m_x = value<br />
+        End Set<br />
+    End Property</p>
+<p>    Public Property Y() As Double<br />
+        Get<br />
+            Return m_y<br />
+        End Get<br />
+        Set(ByVal value As Double)<br />
+            m_y = value<br />
+        End Set<br />
+    End Property</p>
+<p>    Public Property Z() As Double<br />
+        Get<br />
+            Return m_z<br />
+        End Get<br />
+        Set(ByVal value As Double)<br />
+            m_z = value<br />
+        End Set<br />
+    End Property</p>
+<p>    Public Function RotateX(ByVal angle As Integer) As Point3D<br />
+        Dim rad As Double, cosa As Double, sina As Double, yn As Double, zn As Double</p>
+<p>        rad = angle * Math.PI / 180<br />
+        cosa = Math.Cos(rad)<br />
+        sina = Math.Sin(rad)<br />
+        yn = Me.Y * cosa - Me.Z * sina<br />
+        zn = Me.Y * sina + Me.Z * cosa<br />
+        Return New Point3D(Me.X, yn, zn)<br />
+    End Function</p>
+<p>    Public Function RotateY(ByVal angle As Integer) As Point3D<br />
+        Dim rad As Double, cosa As Double, sina As Double, Xn As Double, Zn As Double</p>
+<p>        rad = angle * Math.PI / 180<br />
+        cosa = Math.Cos(rad)<br />
+        sina = Math.Sin(rad)<br />
+        Zn = Me.Z * cosa - Me.X * sina<br />
+        Xn = Me.Z * sina + Me.X * cosa</p>
+<p>        Return New Point3D(Xn, Me.Y, Zn)<br />
+    End Function</p>
+<p>    Public Function RotateZ(ByVal angle As Integer) As Point3D<br />
+        Dim rad As Double, cosa As Double, sina As Double, Xn As Double, Yn As Double</p>
+<p>        rad = angle * Math.PI / 180<br />
+        cosa = Math.Cos(rad)<br />
+        sina = Math.Sin(rad)<br />
+        Xn = Me.X * cosa - Me.Y * sina<br />
+        Yn = Me.X * sina + Me.Y * cosa<br />
+        Return New Point3D(Xn, Yn, Me.Z)<br />
+    End Function</p>
+<p>    Public Function Project(ByVal viewWidth, ByVal viewHeight, ByVal fov, ByVal viewDistance)<br />
+        Dim factor As Double, Xn As Double, Yn As Double<br />
+        factor = fov / (viewDistance + Me.Z)<br />
+        Xn = Me.X * factor + viewWidth / 2<br />
+        Yn = Me.Y * factor + viewHeight / 2<br />
+        Return New Point3D(Xn, Yn, Me.Z)<br />
+    End Function<br />
+End Class<br />
+[/vbnet]</p>
+<p>The file Main.vb has suffered some changes. See below its code.</p>
+<p>[vbnet]<br />
+'<br />
+' Simulation of a Rotating Cube using GDI+<br />
+' Developed by leonelmachava &lt;leonelmachava@gmail.com&gt;<br />
+' http://codentronix.com<br />
+'<br />
+' Copyright (c) 2011 Leonel Machava<br />
+'<br />
+Imports System.Drawing.Graphics<br />
+Imports System.Drawing.Pen<br />
+Imports System.Drawing.Color<br />
+Imports System.Drawing.Brush<br />
+Imports System.Drawing.Point<br />
+Imports System.Drawing.Bitmap</p>
+<p>Public Class Main<br />
+    Protected m_timer As Timer<br />
+    Protected m_vertices(8) As Point3D<br />
+    Protected m_faces(6, 4) As Integer<br />
+    Protected m_colors(6) As Color<br />
+    Protected m_brushes(6) As Brush<br />
+    Protected m_angle As Integer</p>
+<p>    Private Sub Main_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load<br />
+        ' Enable double-buffering to eliminate flickering.<br />
+        Me.SetStyle(ControlStyles.AllPaintingInWmPaint, True)<br />
+        Me.SetStyle(ControlStyles.OptimizedDoubleBuffer, True)</p>
+<p>        InitCube()</p>
+<p>        ' Create the timer.<br />
+        m_timer = New Timer()</p>
+<p>        ' Set the timer interval to 25 milliseconds. This will give us 1000/25 ~ 40 frames per second.<br />
+        m_timer.Interval = 25</p>
+<p>        ' Set the callback for the timer.<br />
+        AddHandler m_timer.Tick, AddressOf AnimationLoop</p>
+<p>        ' Start the timer.<br />
+        m_timer.Start()<br />
+    End Sub</p>
+<p>    Private Sub InitCube()<br />
+        ' Create the cube vertices.<br />
+        m_vertices = New Point3D() {<br />
+                     New Point3D(-1, 1, -1),<br />
+                     New Point3D(1, 1, -1),<br />
+                     New Point3D(1, -1, -1),<br />
+                     New Point3D(-1, -1, -1),<br />
+                     New Point3D(-1, 1, 1),<br />
+                     New Point3D(1, 1, 1),<br />
+                     New Point3D(1, -1, 1),<br />
+                     New Point3D(-1, -1, 1)}</p>
+<p>        ' Create an array representing the 6 faces of a cube. Each face is composed by indices to the vertex array<br />
+        ' above.<br />
+        {% raw %}
+        m_faces = New Integer(,) {{0, 1, 2, 3}, {1, 5, 6, 2}, {5, 4, 7, 6}, {4, 0, 3, 7}, {0, 4, 5, 1}, {3, 2, 6, 7}}</p>
+        {% endraw %}
+<p>        ' Define the colors of each face.<br />
+        m_colors = New Color() {Color.BlueViolet, Color.Cyan, Color.Green, Color.Yellow, Color.Violet, Color.LightSkyBlue}</p>
+<p>        ' Create the brushes to draw each face. Brushes are used to draw filled polygons.<br />
+        For i = 0 To 5<br />
+            m_brushes(i) = New SolidBrush(m_colors(i))<br />
+        Next<br />
+    End Sub</p>
+<p>    Private Sub AnimationLoop()<br />
+        ' Forces the Paint event to be called.<br />
+        Me.Invalidate()</p>
+<p>        ' Update the variable after each frame.<br />
+        m_angle += 1<br />
+    End Sub</p>
+<p>    Private Sub Main_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles Me.Paint<br />
+        Dim t(8) As Point3D<br />
+        Dim f(4) As Integer<br />
+        Dim v As Point3D<br />
+        Dim avgZ(6) As Double<br />
+        Dim order(6) As Integer<br />
+        Dim tmp As Double<br />
+        Dim iMax As Integer</p>
+<p>        ' Clear the window<br />
+        e.Graphics.Clear(Color.LightBlue)</p>
+<p>        ' Transform all the points and store them on the &quot;t&quot; array.<br />
+        For i = 0 To 7<br />
+            Dim b As Brush = New SolidBrush(Color.White)<br />
+            v = m_vertices(i)<br />
+            t(i) = v.RotateX(m_angle).RotateY(m_angle).RotateZ(Me.m_angle)<br />
+            t(i) = t(i).Project(Me.ClientSize.Width, Me.ClientSize.Height, 256, 4)<br />
+        Next</p>
+<p>        ' Compute the average Z value of each face.<br />
+        For i = 0 To 5<br />
+            avgZ(i) = (t(m_faces(i, 0)).Z + t(m_faces(i, 1)).Z + t(m_faces(i, 2)).Z + t(m_faces(i, 3)).Z) / 4.0<br />
+            order(i) = i<br />
+        Next</p>
+<p>        ' Next we sort the faces in descending order based on the Z value.<br />
+        ' The objective is to draw distant faces first. This is called<br />
+        ' the PAINTERS ALGORITHM. So, the visible faces will hide the invisible ones.<br />
+        ' The sorting algorithm used is the SELECTION SORT.<br />
+        For i = 0 To 4<br />
+            iMax = i<br />
+            For j = i + 1 To 5<br />
+                If avgZ(j) &gt; avgZ(iMax) Then<br />
+                    iMax = j<br />
+                End If<br />
+            Next<br />
+            If iMax &lt;&gt; i Then<br />
+                tmp = avgZ(i)<br />
+                avgZ(i) = avgZ(iMax)<br />
+                avgZ(iMax) = tmp</p>
+<p>                tmp = order(i)<br />
+                order(i) = order(iMax)<br />
+                order(iMax) = tmp<br />
+            End If<br />
+        Next</p>
+<p>        ' Draw the faces using the PAINTERS ALGORITHM (distant faces first, closer faces last).<br />
+        For i = 0 To 5<br />
+            Dim points() As Point<br />
+            Dim index As Integer = order(i)<br />
+            points = New Point() {<br />
+                New Point(CInt(t(m_faces(index, 0)).X), CInt(t(m_faces(index, 0)).Y)),<br />
+                New Point(CInt(t(m_faces(index, 1)).X), CInt(t(m_faces(index, 1)).Y)),<br />
+                New Point(CInt(t(m_faces(index, 2)).X), CInt(t(m_faces(index, 2)).Y)),<br />
+                New Point(CInt(t(m_faces(index, 3)).X), CInt(t(m_faces(index, 3)).Y))<br />
+            }<br />
+            e.Graphics.FillPolygon(m_brushes(index), points)<br />
+        Next<br />
+    End Sub<br />
+End Class<br />
+[/vbnet]</p>
+<p>The code is pretty much self-explanatory. Below I will just list the key changes.</p>
+<p>In the Load event I enable double buffering. This is fundamental to eliminate flickering in the animation. Try to remove the first 2 lines of code, and run the application. You will certainly see the flickering that results.</p>
+<p>Basically I have changed the code to draw filled faces instead of lines. However, now we must make sure to draw distant faces first, and closer ones last (<em>Painters Algorithm).</em></p>
+<p>THE FULL SOURCE CODE IS <a title="Link to the Full Source Code" href="http://goo.gl/cyplT">HERE</a>.</p>
+<h2>Conclusion</h2>
+<p>As I have promised in the last tutorial, today I have shown how to make a rotating solid cube. In my next VB.NET tutorial, I will show you how to make a cool game in pretty simple steps.<br />
+<em>If you liked this article, please consider leaving a comment, or sharing this post using one of the buttons below, or even <a href="http://feeds.feedburner.com/codentronix">subscribing to the blog</a>.</em></p>

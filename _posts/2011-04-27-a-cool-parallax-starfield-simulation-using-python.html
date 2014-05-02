@@ -1,0 +1,111 @@
+---
+layout: post
+title: A Cool Parallax Starfield Simulation using Python
+categories:
+- Computer Graphics
+- Pygame
+- Python
+tags:
+- parallax
+- pygame
+- python
+- simulation
+- starfield
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  og_video: http://www.youtube.com/v/u42UiIlNp0g
+  _syntaxhighlighter_encoded: '1'
+  views: '10584'
+  _oembed_36e8223c7cb0ba66061a1d40613625ac: <object width="640" height="505"><param
+    name="movie" value="http://www.youtube.com/v/u42UiIlNp0g?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/u42UiIlNp0g?version=3" type="application/x-shockwave-flash"
+    width="640" height="505" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_711a9c386e3b852f018ae3dd5531614a: <object width="400" height="300"><param
+    name="movie" value="http://www.youtube.com/v/u42UiIlNp0g?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/u42UiIlNp0g?version=3" type="application/x-shockwave-flash"
+    width="400" height="300" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_02cca456c5f78e5a06b6fcc1106fad72: <iframe width="640" height="480" src="http://www.youtube.com/embed/u42UiIlNp0g?feature=oembed"
+    frameborder="0" allowfullscreen></iframe>
+  _wp_rp_related_posts_query_result_cache_expiration: '1400460312'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"80.1043284476957";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"72.7786855406069";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"56.7706333532107";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:16:"55.2103162388616";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"52.0730844030339";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"36.8314363588755";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:16:"36.7717304320761";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:15:"26.888343552247";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:16:"17.7419724169991";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"16.8019651585076";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In one of my previous tutorials, I have demonstrated how to create a <a title="Simple Starfield with Python and Pygame" href="http://codentronix.com/2011/04/24/simple-starfield-with-python-and-pygame/">simple starfield simulation using Python and Pygame</a>. Today, we will make a few modifications in the code from that tutorial to make a pretty cool parallax starfield. The video below shows the parallax starfield in action.</p>
+<p>http://www.youtube.com/watch?v=u42UiIlNp0g</p>
+<h2>The Idea</h2>
+<p>The idea of the parallax effect is to make distant objects appear to be moving slower than closer objects. As you can see in the video, distant stars are smaller and move at a slower speed, in contrast to closer stars that are faster and bigger. To make this even more interesting, I made closer stars brighter than distant stars.</p>
+<h2>The Code</h2>
+<p>If you compare this code with the code from the <a title="Simple Starfield with Python and Pygame" href="http://codentronix.com/2011/04/24/simple-starfield-with-python-and-pygame/">simple starfield tutorial</a>, you will see I have made very few modifications. I<em></em> have basically added a speed attribute to the stars, so they are now represented as a list with the format [X,Y,Speed]. The speed attribute can be 1,2 or 3, and it indicates the speed of the stars, but is also used to determine their color and size. <em></em></p>
+<p>[python]<br />
+import pygame<br />
+from random import randrange, choice</p>
+<p>MAX_STARS  = 250<br />
+STAR_SPEED = 2</p>
+<p>def init_stars(screen):<br />
+  &quot;&quot;&quot; Create the starfield &quot;&quot;&quot;<br />
+  global stars<br />
+  stars = []<br />
+  for i in range(MAX_STARS):<br />
+    # A star is represented as a list with this format: [X,Y,speed]<br />
+    star = [randrange(0,screen.get_width() - 1),<br />
+            randrange(0,screen.get_height() - 1),<br />
+            choice([1,2,3])]<br />
+    stars.append(star)</p>
+<p>def move_and_draw_stars(screen):<br />
+  &quot;&quot;&quot; Move and draw the stars in the given screen &quot;&quot;&quot;<br />
+  global stars<br />
+  for star in stars:<br />
+    star[1] += star[2]<br />
+    # If the star hit the bottom border then we reposition<br />
+    # it in the top of the screen with a random X coordinate.<br />
+    if star[1] &gt;= screen.get_height():<br />
+      star[1] = 0<br />
+      star[0] = randrange(0,639)<br />
+      star[2] = choice([1,2,3])</p>
+<p>    # Adjust the star color acording to the speed.<br />
+    # The slower the star, the darker should be its color.<br />
+    if star[2] == 1:<br />
+      color = (100,100,100)<br />
+    elif star[2] == 2:<br />
+      color = (190,190,190)<br />
+    elif star[2] == 3:<br />
+      color = (255,255,255)</p>
+<p>    # Draw the star as a rectangle.<br />
+    # The star size is proportional to its speed.<br />
+    screen.fill(color,(star[0],star[1],star[2],star[2]))</p>
+<p>def main():<br />
+  # Pygame stuff<br />
+  pygame.init()<br />
+  screen = pygame.display.set_mode((640,480))<br />
+  pygame.display.set_caption(&quot;Parallax Starfield Simulation&quot;)<br />
+  clock = pygame.time.Clock()</p>
+<p>  init_stars(screen)</p>
+<p>  while True:<br />
+    # Lock the framerate at 50 FPS<br />
+    clock.tick(50)</p>
+<p>    # Handle events<br />
+    for event in pygame.event.get():<br />
+      if event.type == pygame.QUIT:<br />
+        return</p>
+<p>    screen.fill((0,0,0))<br />
+    move_and_draw_stars(screen)<br />
+    pygame.display.flip()</p>
+<p>if __name__ == &quot;__main__&quot;:<br />
+  main()<br />
+[/python]</p>
+<p><a href="http://goo.gl/8ER6A">Click here</a> to download the source code.</p>
+<h2>Exercise</h2>
+<p>In this tutorial we made a vertical parallax starfield. Try to modify the code to make an horizontal starfield.</p>
+<h2>Conclusion</h2>
+<p>That's everything for now. In the next tutorial I will show you how to make a 3D starfield simulation.</p>
+<p><em>What do you think about this? Please comment, share or <a href="http://feeds.feedburner.com/codentronix">subscribe</a>.</em></p>

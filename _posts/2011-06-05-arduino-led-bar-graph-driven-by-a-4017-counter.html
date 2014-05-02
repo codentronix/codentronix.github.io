@@ -1,0 +1,90 @@
+---
+layout: post
+title: Arduino LED Bar Graph Driven by a 4017 Counter
+categories:
+- Arduino
+- Electronics
+tags:
+- '4017'
+- arduino
+- LED
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  iframe: <iframe width="560" height="349" src="http://www.youtube.com/embed/P9s0vfk-uII?rel=0"
+    frameborder="0" allowfullscreen></iframe>
+  og_video: http://www.youtube.com/v/P9s0vfk-uII
+  _syntaxhighlighter_encoded: '1'
+  og_image: http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_real.JPG
+  og_description: In this tutorial, my primary objective is to show you how to make
+    a simple LED animation using a LED bar graph and an Arduino. My secondary objective
+    is to share with you a trick to save pins of the Arduino using a 4017 decade counter
+    circuit.
+  views: '12366'
+  _stcr@_ottoteixeira@ig.com.br: '2012-11-03 02:45:47|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400457141'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"505";s:5:"score";s:16:"141.079732616065";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"8.28106788863295";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"6.44848642488464";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"579";s:5:"score";s:16:"5.95476626902159";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"4.88816931053549";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:16:"4.07723909431916";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"635";s:5:"score";s:16:"3.94816205204402";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"3.58351893845611";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"3.31125458905695";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"3.31125458905695";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In this tutorial, my primary objective is to show you how to make a simple LED animation using a LED bar graph and an <a title="Arduino Website" rel="nofollow" href="http://arduino.cc" target="_blank">Arduino</a>. My secondary objective is to share with you a trick to save pins of the Arduino using a 4017 decade counter circuit. The video below shows what we will be making.</p>
+<p>[field name="iframe"]</p>
+<p>&nbsp;</p>
+<p><!--more--></p>
+<p><em>If you are able to reproduce this project, have any doubt, correction, or suggestion, please, let me know by leaving a comment.</em></p>
+<h2>Hardware Required</h2>
+<ul>
+<li>Arduino board.</li>
+<li>(1) LED bar graph (or alternatively 10 LEDs)</li>
+<li>(1) 4017 Decade Counter IC</li>
+<li>Some wires</li>
+<li>Breadboard</li>
+</ul>
+<h2>Schematic</h2>
+<p>[caption id="" align="alignnone" width="404" caption="(Click the image to enlarge)"]<a href="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_schem.png"><img title="Arduino LED Bar Graph with a 4017 Counter" src="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_schem.png" alt="Arduino LED Bar Graph with a 4017 Counter" width="404" height="350" /></a>[/caption]</p>
+<p>As you can see, using the 4017 counter we just need one digital pin from the arduino. Otherwise, we would need 10 pins from the arduino.</p>
+<p>This is how it works: the LEDs of the bar graph are wired to the 10 outputs of the 4017 counter. The clock pin from the counter is wired to the arduino. When the arduino is running, it sends clock pulses to the counter making it advance. When the counter advances, the current LED is turned OFF, and the next one is turned ON. See below the picture of the circuit in real life.</p>
+<p>[caption id="" align="alignnone" width="480" caption="(Click the image to enlarge)"]<a href="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_real.JPG"><img class=" " title="The real life circuit" src="http://codentronix.com/projects/electronics/arduino/led_bar_graph/arduino_led_bar_graph_4017_real.JPG" alt="Arduino LED Bar graph driven by a 4017 counter" width="480" height="360" /></a>[/caption]</p>
+<p><span style="font-size: 20px; font-weight: bold;">Code</span></p>
+<p>[cpp gutter="false"]<br />
+/*<br />
+ * Simple LED Bar graph animation using a 4017 counter.<br />
+ * The 4017 is used to save pins on the arduino.<br />
+ *<br />
+ * Developed by Leonel Machava<br />
+ * http://codentronix.com<br />
+ *<br />
+ * This code is release under the &quot;MIT License&quot; available at<br />
+ * http://www.opensource.org/licenses/mit-license.php<br />
+ */</p>
+<p>/* PIN used to send clock pulses to the counter. */<br />
+int clockPin = 2;</p>
+<p>void setup() {<br />
+  pinMode(clockPin,OUTPUT);<br />
+}</p>
+<p>/*<br />
+ * Sends a clock pulse to the counter making it advance.<br />
+ */<br />
+void clock() {<br />
+  digitalWrite(clockPin,HIGH);<br />
+  delay(1);<br />
+  digitalWrite(clockPin,LOW);<br />
+}</p>
+<p>void loop() {<br />
+  /* Send a clock pulse to the counter. It makes the counter advance<br />
+     causing the current LED to be turned off, and the next one to be<br />
+     turned ON */<br />
+  clock();<br />
+  /* Wait for 300 ms. */<br />
+  delay(300);<br />
+}<br />
+[/cpp]</p>
+<p><a title="Link to the source code" href="http://goo.gl/BQ4Zk">Click here</a> to download the source (<em>arduino_led_bar_graph_4017.pde / 1KB</em>)</p>
+<p><strong>NOTE:</strong> This animation can also be made using just a LED bar graph, a 555 timer, and a counter. My main aim in this tutorial was to share with the arduino fans how to make it using an arduino. Additionally, as said in the beginning, my secondary objective was to show a method of saving pins on the arduino, and I did it using a 4017 counter. An alternative way of saving pins would be through the use of 595 shift registers, but for this case it would not be better than using a 4017 counter because we would need 3 pins from the arduino and 2 shift registers.</p>
+<p><em>If you like this article please share it by clicking one of the buttons below, follow me on <a title="My twitter" href="http://twitter.com/codentronix" target="_blank">twitter</a>, or <a href="http://feeds.feedburner.com/codentronix" target="_blank">register on my RSS</a> to receive article updates. Thanks!</em></p>

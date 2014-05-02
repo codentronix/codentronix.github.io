@@ -1,0 +1,129 @@
+---
+layout: post
+title: A Fast Introduction to Pygame
+categories:
+- Pygame
+- Python
+tags:
+- game loop
+- game programming
+- pygame
+- python
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  views: '19232'
+  _oembed_05e960d9d0af0fc8ca6a4e3d562e177d: <object width="640" height="505"><param
+    name="movie" value="http://www.youtube.com/v/YBT9GxWcZ-U?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/YBT9GxWcZ-U?version=3" type="application/x-shockwave-flash"
+    width="640" height="505" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_df2652fa4c0df95a61ac3e5e65cffb4f: <iframe width="640" height="480" src="http://www.youtube.com/embed/YBT9GxWcZ-U?feature=oembed"
+    frameborder="0" allowfullscreen></iframe>
+  _oembed_5a12a30c687540cc65a5bb769977d0ec: <object width="400" height="300"><param
+    name="movie" value="http://www.youtube.com/v/YBT9GxWcZ-U?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/YBT9GxWcZ-U?version=3" type="application/x-shockwave-flash"
+    width="400" height="300" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _stcr@_i.by@hotmail.com: '2013-11-06 19:50:46|Y'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400446440'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:16:"59.9094647110906";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:2:"18";s:5:"score";s:16:"55.8435196251402";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"462";s:5:"score";s:16:"41.8012496584515";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"36.8314363588755";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"36.8314363588755";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"35.2711192445263";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:16:"35.2711192445263";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"31.3383749155349";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:16:"30.9944531272602";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"155";s:5:"score";s:16:"20.0196242454479";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>Pygame is a cross-platform game library written in Python. It is the most used library to write games using Python. This tutorial aims to get you started using the Pygame library. After finishing this tutorial you will be able to craft simple Pygame applications, and will be in position of understanding complex Pygame applications written by others. I assume the reader has at least a basic understanding of Python.</p>
+<p>If you don't have Python and/or Pygame installed, make sure you first read <a title="How to Install Python and Pygame" href="http://codentronix.com/2011/04/12/how-to-install-python-and-pygame/" target="_blank">this tutorial</a>.</p>
+<h2>Overview</h2>
+<p>Pygame is composed of various modules, each dealing with a specific set of tasks. For example, the <em>display</em> module deals with the display window and screen, the <em>draw</em> module provides functions to draw shapes, and the <em>key </em>module works with the keyboard. These are just some of the modules of the library. The pygame documentation contains documentation for all modules.</p>
+<p>The home of the Pygame library is at <a title="Pygame website" href="http://www.pygame.org/" target="_blank">http://pygame.org</a>, and its documentation can be found at <a title="Pygame documentation" href="http://www.pygame.org/docs/" target="_blank">http://www.pygame.org/docs</a>.</p>
+<p>To make a Pygame application, you follow these steps:</p>
+<ol>
+<li>Import the pygame library.</li>
+<li>Initialize the pygame library.</li>
+<li>Create a window.</li>
+<li>Initialize game objects.</li>
+<li>Start the game loop.</li>
+</ol>
+<h2>Step 1: Import the Pygame library</h2>
+<p>This step is pretty simple, and consists of just the line of code below.</p>
+<p>[python]<br />
+import pygame<br />
+[/python]</p>
+<h2>Step 2: Initialize the pygame library</h2>
+<p>This step is also pretty simple. We just call <em>pygame.init()</em>. This function initializes all the pygame modules.</p>
+<p>[python]<br />
+pygame.init()<br />
+[/python]</p>
+<h2>Step 3: Create a Window</h2>
+<p>After initializing the pygame library, we create a window that will be used to render the game graphics. See the code below.</p>
+<p>[python]<br />
+screen = pygame.display.set_mode((640, 480))<br />
+pygame.display.set_caption(&quot;First Pygame Application&quot;)<br />
+[/python]</p>
+<p>First, we call <em>pygame.display.set_mode()</em> to create the window. This function takes as the first parameter, a tuple that specifies the window dimensions. The return value of this function will be used later to draw into the window. Next, we set a title to the window.</p>
+<h2>Step 4: Initialize game objects</h2>
+<p>In this step we load images, load sounds, do object positioning, set up some state variables, etc. In this tutorial, we will not cover image and sound processing.</p>
+<h2>Step 5: Start the Game Loop</h2>
+<p>The Game Loop is one of most fundamental pieces of any game. It is just a loop where we continuously handle events, check for input, move objects, and draw them. Each iteration of the loop is called a frame. When designing a game loop we must make sure each frame takes exactly  the same time on any machine. This avoids the game to run at  different speeds depending on the speed of the machine.</p>
+<p>To have a smooth  animation the game loop must run at least at <strong>30 frames per second</strong> (FPS). To lock the frame rate, we use a <em>pygame.time.Clock()</em> object. Below is a basic structure of a game loop:</p>
+<p>[python]<br />
+clock = pygame.time.Clock()<br />
+while True<br />
+  clock.tick(50)</p>
+<p>  # Process events<br />
+  for event in pygame.event.get():<br />
+    if event.type == pygame.QUIT:<br />
+      sys.exit()</p>
+<p>  # Clear the screen<br />
+  screen.fill((0, 0, 0))</p>
+<p>  # Check input<br />
+  # Move objects ...<br />
+  # Draw objects ...</p>
+<p>  # Update the screen<br />
+  pygame.display.flip()<br />
+[/python]</p>
+<p>First, we create the clock object that will be used to lock the frame rate. Next, we start the loop, and then call <em>clock.tick()</em> to lock the frame rate to 50 FPS.  Then, we process the event queue, checking if a <em>QUIT</em> event is pending. This event normally happens when the user closes the window. So, if we catch a <em>QUIT</em> event we call <em>sys.exit()</em> to quit the application.</p>
+<p>Next we clear the screen calling <em>screen.fill()</em>. If you remember, we created the  <em>screen</em> variable in Step 3. The <em>fill() </em>function takes as the first parameter the color to fill the window with. Colors in Pygame are represented as RGB tuples.</p>
+<p>Then, we should write code to check for input, move objects, and draw objects.  When we draw things into the window, they are not immediately displayed. So, in the last line of the game loop we call  <em>pygame.display.flip() </em>to display all the drawings in the window.</p>
+<p>If you assemble together all the lines of code presented in each step, and run them, you will get just a black window. In the next section, we will see an example of a Pygame application that moves a box horizontally in the screen, bouncing off the screen borders.</p>
+<h2>Example</h2>
+<p>[python]<br />
+import sys, pygame</p>
+<p>BLACK = 0, 0, 0<br />
+WHITE = 255, 255, 255</p>
+<p>pygame.init()<br />
+screen = pygame.display.set_mode((640,480))<br />
+pygame.display.set_caption(&quot;Moving Box&quot;)</p>
+<p>clock = pygame.time.Clock()</p>
+<p>box_x = 300<br />
+box_dir = 3</p>
+<p>while 1:<br />
+  clock.tick(50)</p>
+<p>  for event in pygame.event.get():<br />
+    if event.type == pygame.QUIT:<br />
+      sys.exit()</p>
+<p>  screen.fill(BLACK)</p>
+<p>  box_x += box_dir<br />
+  if box_x &gt;= 620:<br />
+    box_x = 620<br />
+    box_dir = -3<br />
+  elif box_x &lt;= 0:<br />
+    box_x = 0<br />
+    box_dir = 3</p>
+<p>  pygame.draw.rect(screen, WHITE, (box_x, 200, 20, 20))<br />
+  pygame.display.flip()<br />
+[/python]</p>
+<p>First of all, we import the built-in <em>sys </em>module and the <em>pygame </em>module. Next we define BLACK and WHITE color constants. Then we initialize pygame, and setup the window. After that, we create a clock object, and initialize the box object. We use <em>box_x </em>to track the position of the box, and <em>box_dir </em>to track the direction (left / right) .</p>
+<p>Next, we enter the game loop. First, we call <em>clock.tick(50)</em> to lock the frame rate at 50 FPS. Then, we process the event queue, quitting the application if QUIT event is found. After that, we clear the screen with BLACK color. Next, we move the box, making it bounce if it hits the window borders. Then, we draw the box calling <em>pygame.draw.rect()</em>, and finally call <em>pygame.display.flip() </em>to update the window.</p>
+<p>The video below shows the code above in action.<br />
+http://www.youtube.com/watch?v=YBT9GxWcZ-U</p>
+<p>To get more details about the Pygame modules and functions, check the <a title="Pygame documentation" href="http://www.pygame.org/docs/" target="_blank">Pygame documentation</a>.</p>
+<h2>Conclusion</h2>
+<p>As you can see, Pygame is pretty simple. In this tutorial, I gave you just the basics to get started with Pygame. In this blog you can find more <a href="http://codentronix.com/category/programming/python/pygame">tutorials on Pygame</a> that will help you along the way.</p>

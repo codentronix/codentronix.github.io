@@ -1,0 +1,117 @@
+---
+layout: post
+title: 3D Starfield made using Python and Pygame
+categories:
+- Computer Graphics
+- Pygame
+- Python
+tags:
+- 3d
+- pygame
+- python
+- simulation
+- starfield
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _oembed_0330d93187ce7fa357e6355317ae394e: ! '{{unknown}}'
+  _oembed_9419d11bccb811d2f8e4ed622213a4de: ! '{{unknown}}'
+  og_video: http://www.youtube.com/v/Q_tKrwUMR78
+  views: '10057'
+  iframe: <iframe width="480" height="390" src="http://www.youtube.com/embed/Q_tKrwUMR78?rel=0"
+    frameborder="0"></iframe><p>&nbsp;</p>
+  _oembed_030e2ea27f29fd7c42184c469aaaed2f: ! '{{unknown}}'
+  _oembed_18d9eeeb953c630ad432819b4866a620: ! '{{unknown}}'
+  _stcr@_l.g@7.manadas.org: '2011-10-27 16:28:43|Y'
+  _oembed_fefdc6bc2a2cf42ce92438f01e2ea77a: ! '{{unknown}}'
+  _oembed_c971b872f8e656b11b4860d8c479d655: ! '{{unknown}}'
+  _wp_rp_related_posts_query_result_cache_expiration: '1400492881'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"383";s:5:"score";s:16:"80.1043284476957";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:15:"76.362204479063";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"416";s:5:"score";s:16:"62.7276553280122";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"264";s:5:"score";s:16:"61.5153837201216";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"325";s:5:"score";s:16:"59.9550666057725";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:15:"43.127838092772";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"41.8012496584515";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:16:"38.3538446934416";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"428";s:5:"score";s:16:"27.4565360834859";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"447";s:5:"score";s:16:"25.6239546197376";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>In this tutorial I will show you how to create a pretty cool 3D Starfield simulation using Python and Pygame. See in the video below a demonstration of the simulation.</p>
+<p>[field name="iframe"]</p>
+<p><a title="Link to the full source code." href="http://goo.gl/7jzR1">Click here</a> to download the full source code.</p>
+<p>NOTE: In previous tutorials, I have demonstrated how to create a <a title="Simple Starfield with Python and Pygame" href="http://codentronix.com/2011/04/24/simple-starfield-with-python-and-pygame/">Simple Starfield</a> as well as how to create a <a title="A Cool Parallax Starfield Simulation using Python" href="http://codentronix.com/2011/04/27/a-cool-parallax-starfield-simulation-using-python/">Parallax Starfield</a>.</p>
+<h2>The Code</h2>
+<p>To simulate the effect of a 3D starfield, we initially create a list of stars that are randomly positioned in the world. Each star is represented as a 3D coordinate, I mean, for each star we just store its X,Y and Z coordinates. Then we start the animation loop where we decrease the star's Z coordinates on each frame. Decreasing the Z coordinate of a star makes it appear to be approaching the screen. When a star disappears from the screen, we reposition it again in the screen giving it random X and Y coordinates, and setting Z = maximum depth.</p>
+<p>To make it even more interesting, we make closer stars bigger than distant stars. Similarly, we make closer stars brighter than the distant ones.</p>
+<p>Since the stars are represented as 3D coordinates, they must be converted to 2D before being drawn into the screen. The code does that  using perspective projection formulas.</p>
+<p>The code is presented below. As you can see, the simulation is made with very few lines of code. If you have any doubt or suggestion, please don't hesitate to leave a comment.</p>
+<p>[python gutter="false"]<br />
+&quot;&quot;&quot;<br />
+ 3D Starfield Simulation<br />
+ Developed by Leonel Machava &lt;leonelmachava@gmail.com&gt;</p>
+<p> http://codeNtronix.com<br />
+ http://twitter.com/codentronix<br />
+&quot;&quot;&quot;<br />
+import pygame, math<br />
+from random import randrange</p>
+<p>class Simulation:<br />
+    def __init__(self, num_stars, max_depth):<br />
+        pygame.init()</p>
+<p>        self.screen = pygame.display.set_mode((640, 480))<br />
+        pygame.display.set_caption(&quot;3D Starfield Simulation (visit codeNtronix.com)&quot;)</p>
+<p>        self.clock = pygame.time.Clock()<br />
+        self.num_stars = num_stars<br />
+        self.max_depth = max_depth</p>
+<p>        self.init_stars()</p>
+<p>    def init_stars(self):<br />
+        &quot;&quot;&quot; Create the starfield &quot;&quot;&quot;<br />
+        self.stars = []<br />
+        for i in range(self.num_stars):<br />
+            # A star is represented as a list with this format: [X,Y,Z]<br />
+            star = [randrange(-25,25), randrange(-25,25), randrange(1, self.max_depth)]<br />
+            self.stars.append(star)</p>
+<p>    def move_and_draw_stars(self):<br />
+        &quot;&quot;&quot; Move and draw the stars &quot;&quot;&quot;<br />
+        origin_x = self.screen.get_width() / 2<br />
+        origin_y = self.screen.get_height() / 2</p>
+<p>        for star in self.stars:<br />
+            # The Z component is decreased on each frame.<br />
+            star[2] -= 0.19</p>
+<p>            # If the star has past the screen (I mean Z&lt;=0) then we<br />
+            # reposition it far away from the screen (Z=max_depth)<br />
+            # with random X and Y coordinates.<br />
+            if star[2] &lt;= 0:<br />
+                star[0] = randrange(-25,25)<br />
+                star[1] = randrange(-25,25)<br />
+                star[2] = self.max_depth</p>
+<p>            # Convert the 3D coordinates to 2D using perspective projection.<br />
+            k = 128.0 / star[2]<br />
+            x = int(star[0] * k + origin_x)<br />
+            y = int(star[1] * k + origin_y)</p>
+<p>            # Draw the star (if it is visible in the screen).<br />
+            # We calculate the size such that distant stars are smaller than<br />
+            # closer stars. Similarly, we make sure that distant stars are<br />
+            # darker than closer stars. This is done using Linear Interpolation.<br />
+            if 0 &lt;= x &lt; self.screen.get_width() and 0 &lt;= y &lt; self.screen.get_height():<br />
+                size = (1 - float(star[2]) / self.max_depth) * 5<br />
+                shade = (1 - float(star[2]) / self.max_depth) * 255<br />
+                self.screen.fill((shade,shade,shade),(x,y,size,size))</p>
+<p>    def run(self):<br />
+        &quot;&quot;&quot; Main Loop &quot;&quot;&quot;<br />
+        while 1:<br />
+            # Lock the framerate at 50 FPS.<br />
+            self.clock.tick(50)</p>
+<p>            # Handle events.<br />
+            for event in pygame.event.get():<br />
+                if event.type == pygame.QUIT:<br />
+                    pygame.quit()<br />
+                    return</p>
+<p>            self.screen.fill((0,0,0))<br />
+            self.move_and_draw_stars()<br />
+            pygame.display.flip()</p>
+<p>if __name__ == &quot;__main__&quot;:<br />
+    Simulation(512, 32).run()<br />
+[/python]</p>
+<p><a title="Link to the full source code." href="http://goo.gl/7jzR1">Click here</a> to download the full source code.</p>
+<p><em>If you liked this article, please consider leaving a comment, or sharing this post using one of the buttons below, or even <a href="http://feeds.feedburner.com/codentronix">subscribing to the blog</a>.</em></p>

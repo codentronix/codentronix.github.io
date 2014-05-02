@@ -1,0 +1,189 @@
+---
+layout: post
+title: ! 'Game Programming with JavaScript, HTML and CSS: Introduction'
+categories:
+- Game Programming
+- JavaScript
+tags:
+- css
+- game loop
+- game programming
+- html
+- javascript
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  views: '3513'
+  og_video: http://www.youtube.com/v/QCNY0jZCiLg
+  _oembed_7543b8bf7d3622e365220e1e46b5a122: <object width="640" height="505"><param
+    name="movie" value="http://www.youtube.com/v/QCNY0jZCiLg?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/QCNY0jZCiLg?version=3" type="application/x-shockwave-flash"
+    width="640" height="505" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_c94806adfb6dbf7f236d2ee5c4f2d4aa: <object width="400" height="300"><param
+    name="movie" value="http://www.youtube.com/v/QCNY0jZCiLg?version=3"></param><param
+    name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed
+    src="http://www.youtube.com/v/QCNY0jZCiLg?version=3" type="application/x-shockwave-flash"
+    width="400" height="300" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+  _oembed_4644b706f51c1b5183575f32b25f23ff: <iframe width="640" height="480" src="http://www.youtube.com/embed/QCNY0jZCiLg?feature=oembed"
+    frameborder="0" allowfullscreen></iframe>
+  _wp_rp_related_posts_query_result_cache_expiration: '1400528500'
+  _wp_rp_related_posts_query_result_cache_5: a:10:{i:0;O:8:"stdClass":2:{s:7:"post_id";s:3:"100";s:5:"score";s:16:"135.799469961284";}i:1;O:8:"stdClass":2:{s:7:"post_id";s:3:"268";s:5:"score";s:16:"55.8435196251402";}i:2;O:8:"stdClass":2:{s:7:"post_id";s:3:"136";s:5:"score";s:16:"30.8732038823774";}i:3;O:8:"stdClass":2:{s:7:"post_id";s:3:"597";s:5:"score";s:16:"30.1287402981086";}i:4;O:8:"stdClass":2:{s:7:"post_id";s:3:"359";s:5:"score";s:16:"30.1287402981086";}i:5;O:8:"stdClass":2:{s:7:"post_id";s:3:"396";s:5:"score";s:16:"15.6861591791385";}i:6;O:8:"stdClass":2:{s:7:"post_id";s:3:"668";s:5:"score";s:16:"11.6699923967304";}i:7;O:8:"stdClass":2:{s:7:"post_id";s:3:"342";s:5:"score";s:16:"9.37209025164071";}i:8;O:8:"stdClass":2:{s:7:"post_id";s:3:"558";s:5:"score";s:16:"8.43208299314924";}i:9;O:8:"stdClass":2:{s:7:"post_id";s:3:"155";s:5:"score";s:16:"7.87147906409092";}}
+author:
+  login: admin
+  email: leonelmachava@gmail.com
+  display_name: lefam
+  first_name: Leonel
+  last_name: Machava
+---
+<p>This is the first part of a series of tutorials that aim to teach you how to make games with JavaScript, HTML and CSS. In this tutorial you will learn the concept of the Game Loop and will apply this concept to build a simple animation. HTML, JavaScript and CSS are normally used to design web pages. However, after finishing this tutorial you will understand how these 3 tools can be combined to make games.<!--more--> The video below shows what you will accomplish at the end of the tutorial.</p>
+<p>http://www.youtube.com/watch?v=QCNY0jZCiLg</p>
+<p>What you will need:</p>
+<ul>
+<li>A browser to test the concept.</li>
+<li>Any editor of your choice to write the code.</li>
+</ul>
+<p>Here is the link to the <a href="http://codentronix.com/wp-content/uploads/2011/04/tut1.zip">Complete Source Code</a>.</p>
+<h4>The HTML Structure</h4>
+<p>When writing a game using HTML you first start coding the HTML structure.</p>
+<p>[code lang="javascript" htmlscript="true" title="Listing 1. The HTML Structure"]<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+  &lt;title&gt;Game Programming with JavaScript, HTML and CSS: Introduction&lt;/title&gt;</p>
+<p>  &lt;style type='text/css'&gt;<br />
+    #game_region {<br />
+      width: 600px;<br />
+      height: 400px;<br />
+      background-color: black;<br />
+      position:relative;<br />
+    }</p>
+<p>    #box {<br />
+      width: 48px;<br />
+      height: 48px;<br />
+      background-color: white;<br />
+      position: absolute;<br />
+      left: 280px;<br />
+      top: 180px;<br />
+    }<br />
+  &lt;/style&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+  &lt;div id='game_region'&gt;<br />
+    &lt;div id='box'&gt;&lt;/div&gt;<br />
+  &lt;/div&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/code]</p>
+<p>Save this code in a file and run it on a browser. You should have as a result a black region with a small white box inside it. The black region is where the animation will run and is defined by the <strong>game_region div</strong>. The white box is the one that will be animated and is defined by the <strong>box div</strong> inside the game_region div.</p>
+<p><a href="http://codentronix.com/wp-content/uploads/2011/04/html_structure.gif"><img class="alignnone size-medium wp-image-78" title="HTML Structure" src="http://codentronix.com/wp-content/uploads/2011/04/html_structure-300x245.gif" alt="" width="300" height="245" /></a></p>
+<h4>The Game Loop</h4>
+<p>The Game Loop is one of the fundamentals elements of a game. It is a loop where the game actually happens. It is a series of instructions that are repeated until an event triggers the end of the game. We summarize what a game loop is in the pseudo-code presented below.</p>
+<p>[code title="Listing 2. Game Loop pseudo-code"]<br />
+  while( game_is_running ) {<br />
+    check_input()     // keyboard, mouse, joystick<br />
+    update_objects()  // according to input or AI (artificial intelligence)<br />
+  }<br />
+[/code]</p>
+<p>Each iteration of the game loop is called a <strong>frame</strong>. When designing a game loop we must make sure each frame takes exactly the same time on any machine. This is to avoid the game to run at different speeds depending on the speed of the machine. To have a smooth animation the game loop must run at least at <strong>30 frames per second</strong>.  So, how do we create a game loop using JavaScript? We create it using the <strong>setInterval()</strong> function. This function makes a given function to be called in given periodic intervals. The interval period is given in milliseconds.</p>
+<p>[code]<br />
+  setInterval(func,interval);<br />
+  // The function func will be called infinitely every &quot;interval&quot; milliseconds<br />
+[/code]</p>
+<p>Let us create a game loop that runs at 30 FPS. 1 second is equivalent to 1000 milliseconds. So one frame should take 1000/30=33 milliseconds. The code below shows how we create this loop:</p>
+<p>[code lang="javascript" title="Listing 3. Creating a Game Loop with JavaScript"]<br />
+  function gameLoop() {<br />
+    // ...<br />
+  }</p>
+<p>  setInterval(gameLoop, 33);<br />
+[/code]</p>
+<h4>The animation</h4>
+<p>So below is the complete code to animate the box. This is the HTML structure we already have plus the JavaScript code to animate the box.</p>
+<p>[code lang="javascript" htmlscript="true" title="Listing 4. Complete Code"]<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+  &lt;title&gt;Game Programming with JavaScript, HTML and CSS: Introduction&lt;/title&gt;</p>
+<p>  &lt;style type='text/css'&gt;<br />
+    #game_region {<br />
+      width: 600px;<br />
+      height: 400px;<br />
+      background-color: black;<br />
+      position:relative;<br />
+    }</p>
+<p>    #box {<br />
+      width: 48px;<br />
+      height: 48px;<br />
+      background-color: white;<br />
+      position: absolute;<br />
+      left: 280px;<br />
+      top: 180px;<br />
+    }<br />
+  &lt;/style&gt;</p>
+<p>&lt;script type='text/javascript'&gt;<br />
+    var box;</p>
+<p>    // Maximum value for the box's X and Y coordinates.<br />
+    var MAX_BOX_X = 600 - 48;<br />
+    var MAX_BOX_Y = 400 - 48;</p>
+<p>    var SPEED = 5;</p>
+<p>    // Configures the init() function to be called after the document is loaded.<br />
+    window.onload = init;</p>
+<p>    function init() {<br />
+      box = document.getElementById(&quot;box&quot;);</p>
+<p>      box.posX = box.offsetLeft;<br />
+      box.posY = box.offsetTop;<br />
+      box.velX = SPEED;<br />
+      box.velY = SPEED;</p>
+<p>      setInterval(gameLoop,33);<br />
+    }</p>
+<p>    function gameLoop() {<br />
+      moveBox()<br />
+    }</p>
+<p>    function moveBox() {<br />
+      box.posX += box.velX;<br />
+      box.posY += box.velY;</p>
+<p>      if( box.posX &lt;= 0 ) {<br />
+        box.posX = 0;<br />
+        box.velX = -box.velX;<br />
+      }<br />
+      if( box.posX &gt;= MAX_BOX_X ) {<br />
+        box.posX = MAX_BOX_X;<br />
+        box.velX = -box.velX;<br />
+      }<br />
+      if( box.posY &lt;= 0 ) {<br />
+        box.posY = 0;<br />
+        box.velY = -box.velY;<br />
+      }<br />
+      if( box.posY &gt;= MAX_BOX_Y ) {<br />
+        box.posY = MAX_BOX_Y;<br />
+        box.velY = -box.velY;<br />
+      }<br />
+      // Update the left and top CSS properties.<br />
+      box.style.left = box.posX +  &quot;px&quot;;<br />
+      box.style.top  = box.posY + &quot;px&quot;;<br />
+    }<br />
+  &lt;/script&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+  &lt;div id='game_region'&gt;<br />
+    &lt;div id='box'&gt;&lt;/div&gt;<br />
+  &lt;/div&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;<br />
+[/code]</p>
+<p>The constant <strong>MAX_BOX_X</strong> defines the maximum value the box's left property can have while still being completely inside the game_region div. Likewise, The <strong>MAX_BOX_Y</strong> defines the maximum value for the box's top property. <strong>SPEED </strong>defines the box's moving speed. The animation is run only after the document is completely loaded.  In the <strong>init()</strong> function we save the reference to the <em>box div</em> in the <strong>box variable</strong>. We later use this variable to change the box's position. Next we create the properies <strong>box.posX</strong> and <strong>box.posY</strong> where we save the box's <strong></strong>coordinates. <strong>obj.offsetLeft</strong> and <strong>obj.offsetTop</strong> are read-only properties that return, respectively, the left and top box coordinates. We follow creating the velocity properties. The function ends setting up the game loop to run at 30 FPS.</p>
+<p>In the game loop we just call the <strong>moveBox()</strong> function that moves the box in each frame. In the <strong>moveBox()</strong> function we update the box position according to the velocity properties and we make sure the box stays inside the game_region. When the box hits the game_region boundaries we make it bounce by inverting the respective velocity property. To make the box position change in the screen we update the left and top CSS positioning properties using <strong>box.style.left</strong> and <strong>box.style.top</strong>.</p>
+<pre>box.offsetLeft ==&gt; Returns the box's x coordinate (it is read-only)
+box.offsetTop  ==&gt; Returns the box's y coordinate (it is read-only)
+box.style      ==&gt; Gives access to the CSS properties
+box.style.left ==&gt; Gives access to the CSS left property
+box.style.top  ==&gt; Gives access to the CSS top property</pre>
+<h4>Exercises</h4>
+<ol>
+<li>Modify the background color of the moving box from white to yellow.</li>
+<li>Modify the game loop to run at 40 FPS.</li>
+<li>Modify the code to have 2 animated boxes.</li>
+</ol>
+<p><em>If you enjoy making games like we do, then <a href="http://feeds.feedburner.com/codentronix.com">subscribe to this blog</a> and/or <a href="http://twitter.com/codentronix">follow us on twitter.<br />
+</a></em></p>
