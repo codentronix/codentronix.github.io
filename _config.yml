@@ -1,4 +1,28 @@
-name: Your New Jekyll Site
+name: codeNtronix
 markdown: redcarpet
 pygments: true
 permalink: /:year/:month/:day/:title/
+
+theme:
+  # Color for top bar, links, etc
+  highlight_color: '#3498db'
+
+  social:
+    github: lefam
+    #bitbucket: philipj
+    #hacker_news: swanson
+    #stackexchange: 348619
+    #stackoverflow: 348619
+    twitter: codentronix
+    #facebook: zuck
+    #tumblr: animalygifs
+    linkedin: leonelmachava
+    #gplus: 110552447039675960964
+
+  # "Hi, I'm _______"
+  name: Leonel Machava
+  email: leonelmachava@gmail.com
+  tagline: "half code / half electronics"
+
+  # Google Analytics key, leave blank to ignore
+  google_analytics_key: UA-xxxx-x

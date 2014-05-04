@@ -18,46 +18,52 @@
         <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
 
-        <header class="header">
+      <header class="header">
+        <div id='main-header-content'>
           <h1 class="title"><a href="/">{{ site.name }}</a></h1>
           <a class="extra" href="/">home</a>
-        </header>
+        </div>
+      </header>
 
+      <main>
         {{ content }}
+      </main>
 
-        <footer class="footer">
+      <footer class="footer">
+        <div id='main-footer-content'>
           <div class="contact">
             <p>
-              Leonel Machava<br />
+              {{ site.theme.name }}<br />
               Software Engineer<br />
-              leonelmachava@gmail.com
+              {{ site.theme.email }}
             </p>
           </div>
           <div class="contact">
             <p>
-              <a href="https://github.com/lefam">github.com/lefam</a><br />
-              <a href="https://twitter.com/codentronix">twitter.com/codentronix</a><br />
+              <a href="http://github.com/{{ site.theme.social.github }}">github.com/{{ site.theme.social.github }}</a><br />
+              <a href="http://twitter.com/{{ site.theme.social.twitter }}">github.com/{{ site.theme.social.twitter }}</a><br />
             </p>
           </div>
-        </footer>
+        </div>
+      </footer>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+      <script src="js/plugins.js"></script>
+      <script src="js/main.js"></script>
 
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X');ga('send','pageview');
-        </script>
+      <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+      <script>
+          (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+          function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+          e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+          e.src='//www.google-analytics.com/analytics.js';
+          r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+          ga('create','UA-XXXXX-X');ga('send','pageview');
+      </script>
     </body>
 </html>
