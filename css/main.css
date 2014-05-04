@@ -115,6 +115,18 @@ main {
   padding: 0 5px;
 }
 
+main iframe {
+  max-width: 690px;
+}
+
+#home ul {
+  padding: 0;
+}
+
+header h1 {
+  margin: 0;
+}
+
 /**** HOME ****/
 
 .posts {
@@ -149,7 +161,7 @@ main {
 
 .title {
   display: inline-block;
-  margin-bottom: 2em;
+  margin-bottom: 0em;
 }
 
 .title a {
